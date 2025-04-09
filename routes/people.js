@@ -283,4 +283,119 @@ router.get('/:id/network', async (req, res, next) => {
     }
 });
 
+
+// Add this to your routes/people.js file
+
+// GET extended family network data (multiple generations)
+router.get('/:id/extended-network', async (req, res, next) => {
+    const personId = parseInt(req.params.id);
+    const generations = parseInt(req.query.generations || 3); // Default 3 generations
+
+    try {
+        // Get the starting person
+        const personResult = await pool.query('SELECT * FROM network.person WHERE id = $1', [personId]);
+
+        if (personResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Person not found' });
+        }
+
+        // Initialize the network with the starting person
+        const networkMap = new Map();
+        const queue = [];
+
+        // Add starting person to both map and queue
+        networkMap.set(personId, personResult.rows[0]);
+        queue.push({
+            id: personId,
+            generation: 0,
+            direction: 'center' // This is our starting point
+        });
+
+        // Process the queue to build the network
+        while (queue.length > 0) {
+            const current = queue.shift();
+
+            // Skip if we've reached our generation limit in a particular direction
+            if (
+                (current.direction === 'up' && current.generation >= generations) ||
+                (current.direction === 'down' && current.generation >= generations)
+            ) {
+                continue;
+            }
+
+            const person = networkMap.get(current.id);
+
+            // Add parents (going up in generations)
+            if (person.fatherid && !networkMap.has(person.fatherid)) {
+                const fatherResult = await pool.query('SELECT * FROM network.person WHERE id = $1', [person.fatherid]);
+                if (fatherResult.rows.length > 0) {
+                    networkMap.set(person.fatherid, fatherResult.rows[0]);
+                    queue.push({
+                        id: person.fatherid,
+                        generation: current.generation + 1,
+                        direction: 'up'
+                    });
+                }
+            }
+
+            if (person.motherid && !networkMap.has(person.motherid)) {
+                const motherResult = await pool.query('SELECT * FROM network.person WHERE id = $1', [person.motherid]);
+                if (motherResult.rows.length > 0) {
+                    networkMap.set(person.motherid, motherResult.rows[0]);
+                    queue.push({
+                        id: person.motherid,
+                        generation: current.generation + 1,
+                        direction: 'up'
+                    });
+                }
+            }
+
+            // Add spouse
+            if (person.spouseid && !networkMap.has(person.spouseid)) {
+                const spouseResult = await pool.query('SELECT * FROM network.person WHERE id = $1', [person.spouseid]);
+                if (spouseResult.rows.length > 0) {
+                    networkMap.set(person.spouseid, spouseResult.rows[0]);
+                    // Don't increase generation for spouse, but check their parents
+                    queue.push({
+                        id: person.spouseid,
+                        generation: current.generation,
+                        direction: current.direction
+                    });
+                }
+            }
+
+            // Add children (going down in generations)
+            const childrenQuery = `
+                SELECT * FROM network.person 
+                WHERE fatherid = $1 OR motherid = $1
+                ORDER BY birthdate, id
+            `;
+
+            const childrenResult = await pool.query(childrenQuery, [current.id]);
+            for (const child of childrenResult.rows) {
+                if (!networkMap.has(child.id)) {
+                    networkMap.set(child.id, child);
+                    queue.push({
+                        id: child.id,
+                        generation: current.generation + 1,
+                        direction: 'down'
+                    });
+                }
+            }
+        }
+
+        // Convert map to array for response
+        const networkArray = Array.from(networkMap.values());
+
+        res.json({
+            startPerson: personId,
+            count: networkArray.length,
+            network: networkArray
+        });
+
+    } catch (err) {
+        next(err);
+    }
+});
+
 module.exports = router;
