@@ -7,7 +7,10 @@ const pool = require('../config/db');
 router.get('/', async (req, res, next) => {
     try {
         const result = await pool.query('SELECT * FROM network.person ORDER BY id');
+        console.log("Returning from People");
+        console.dir(result.rowCount)
         res.json(result.rows);
+
     } catch (err) {
         next(err);
     }

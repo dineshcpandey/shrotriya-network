@@ -10,13 +10,16 @@ const searchRoutes = require('./routes/search');
 const app = express();
 const port = process.env.PORT || 3000;
 
-
 app.use(cors({
-    origin: 'http://localhost:3000', // Replace with your React app's URL
+    // Allow access from any frontend during development
+    origin: function (origin, callback) {
+        // Allow all origins in development mode
+        // In production, you would want to be more restrictive
+        callback(null, true);
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
 
 
 // Apply middleware
