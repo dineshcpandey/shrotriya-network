@@ -5,6 +5,7 @@ const cors = require('cors');
 const applyMiddleware = require('./middleware');
 const peopleRoutes = require('./routes/people');
 const searchRoutes = require('./routes/search');
+const relationRoutes = require('./routes/personController');
 
 // Initialize Express app
 const app = express();
@@ -28,6 +29,9 @@ applyMiddleware(app);
 // API Routes
 app.use('/api/people', peopleRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/details', relationRoutes);
+
+
 
 // Root route
 app.get('/', (req, res) => {

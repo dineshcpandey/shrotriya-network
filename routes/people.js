@@ -16,8 +16,40 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+// GET all people for relation map
+router.get('/', async (req, res, next) => {
+    try {
+        const result = await pool.query('SELECT * FROM network.person ORDER BY id');
+        console.log("Returning from People");
+        console.dir(result.rowCount)
+        res.json(result.rows);
+
+    } catch (err) {
+        next(err);
+    }
+});
+
+
 // GET a single person by ID
 router.get('/:id', async (req, res, next) => {
+    const personId = parseInt(req.params.id);
+
+    try {
+        const result = await pool.query('SELECT * FROM network.person WHERE id = $1', [personId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Person not found' });
+        }
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+// GET a single person by ID for relationmap
+router.get('/relationmap/:id', async (req, res, next) => {
     const personId = parseInt(req.params.id);
 
     try {
