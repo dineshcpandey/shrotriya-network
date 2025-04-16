@@ -34,7 +34,7 @@ async function getSpouses(personId) {
          WHERE spouseid = $1`,
         [personId]
     );
-    return result.rows.map(row => row.spouseid || row.id.toString());
+    return result.rows.map(row => row.spouseid.toString() || row.id.toString());
 }
 
 async function getChildren(personId) {
@@ -161,6 +161,49 @@ async function addPerson(personData) {
     return { id: newId, message: 'Person added successfully' };
 }
 
+async function updatePerson(personId, payload) {
+    const {
+        personname,
+        birthdate,
+        gender,
+        currentlocation,
+        fatherid,
+        motherid,
+        spouseid,
+        worksat,
+        nativeplace,
+        phone,
+        mail_id,
+        living
+    } = payload;
+
+    const updateQuery = `
+        UPDATE network.person SET
+            personname = $1,
+            birthdate = $2,
+            gender = $3,
+            currentlocation = $4,
+            fatherid = $5,
+            motherid = $6,
+            spouseid = $7,
+            worksat = $8,
+            nativeplace = $9,
+            phone = $10,
+            mail_id = $11,
+            living = $12
+        WHERE id = $13
+        RETURNING *;
+    `;
+
+    const result = await pool.query(updateQuery, [
+        personname, birthdate, gender, currentlocation,
+        fatherid, motherid, spouseid,
+        worksat, nativeplace, phone, mail_id, living,
+        personId
+    ]);
+
+    return result.rows[0];
+}
 
 
 module.exports = {
@@ -169,5 +212,6 @@ module.exports = {
     getChildren,
     getNetworkPeople,
     searchPeople,
-    addPerson
+    addPerson,
+    updatePerson
 };

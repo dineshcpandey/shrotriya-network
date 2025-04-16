@@ -1,6 +1,6 @@
 // personController.js
 const express = require('express');
-const { getPersonWithRelationships, getNetworkPeople, searchPeople, addPerson } = require('../services/personService');
+const { getPersonWithRelationships, getNetworkPeople, searchPeople, addPerson, updatePerson } = require('../services/personService');
 
 const router = express.Router();
 
@@ -56,5 +56,15 @@ router.get('/:id/network', async (req, res) => {
     }
 });
 
+router.put('/:id', async (req, res) => {
+    try {
+        const updatedPerson = await updatePerson(req.params.id, req.body);
+        if (!updatedPerson) return res.status(404).send('Person not found');
+        res.json(updatedPerson);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error updating person');
+    }
+});
 
 module.exports = router;

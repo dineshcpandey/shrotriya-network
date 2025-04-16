@@ -1,13 +1,14 @@
 function mapPersonToCustomStructure(dbPerson, relationships = {}) {
     const [firstName = '', ...rest] = (dbPerson.personname || '').split(' ');
     const lastName = rest.join(' ');
-    console.log("inside mapPersonToCustomStructure")
-    return {
+    console.log("inside mapPersonToCustomStructure");
+    console.log(dbPerson);
+
+    // Create the base structure
+    const result = {
         id: dbPerson.id.toString(),
         rels: {
             spouses: relationships.spouses || [],
-            father: relationships.father || null,
-            mother: relationships.mother || null,
             children: relationships.children || []
         },
         data: {
@@ -26,9 +27,23 @@ function mapPersonToCustomStructure(dbPerson, relationships = {}) {
                 "phone": dbPerson.phone || null
             },
             "work": dbPerson.worksat || null,
-            "nativePlace": dbPerson.nativeplace || null
+            "nativePlace": dbPerson.nativeplace || null,
+            // Adding the new properties
+            "desc": `${dbPerson.nativeplace || ''} ${dbPerson.currentlocation || ''} ${dbPerson.worksat || ''}`,
+            "label": `${firstName} ${lastName}`
         }
     };
+
+    // Conditionally add father and mother if they are not null or undefined
+    if (relationships.father !== null && relationships.father !== undefined) {
+        result.rels.father = relationships.father.toString();
+    }
+
+    if (relationships.mother !== null && relationships.mother !== undefined) {
+        result.rels.mother = relationships.mother.toString();
+    }
+
+    return result;
 }
 
 module.exports = {
