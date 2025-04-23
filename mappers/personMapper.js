@@ -2,7 +2,7 @@ function mapPersonToCustomStructure(dbPerson, relationships = {}) {
     const [firstName = '', ...rest] = (dbPerson.personname || '').split(' ');
     const lastName = rest.join(' ');
     console.log("inside mapPersonToCustomStructure");
-    console.log(dbPerson);
+    console.log(dbPerson.id);
 
     // Create the base structure
     const result = {

@@ -55,6 +55,7 @@ async function getNetworkPeople(personId) {
     if (mainQuery.rows.length === 0) return [];
 
     const person = mainQuery.rows[0];
+
     const fatherId = person.fatherid;
     const motherId = person.motherid;
 
@@ -63,13 +64,22 @@ async function getNetworkPeople(personId) {
         getChildren(personId)
     ]);
 
+
     // Gather all unique IDs (string format)
     const relatedIds = new Set([
+        ...[personId],
         ...spouseIds,
         ...(fatherId ? [fatherId.toString()] : []),
         ...(motherId ? [motherId.toString()] : []),
         ...childIds
     ]);
+
+    console.log("personId: ", personId)
+    console.log("fatherid: ", fatherId)
+    console.log("motherId: ", motherId)
+    console.log("spouseIds: ", spouseIds)
+    console.log("childIds: ", childIds)
+    console.log("relatedIds: ", relatedIds)
 
     const relatedPeople = await Promise.all(
         Array.from(relatedIds).map(id => getPersonWithRelationships(id))
@@ -160,48 +170,51 @@ async function addPerson(personData) {
 
     return { id: newId, message: 'Person added successfully' };
 }
-
 async function updatePerson(personId, payload) {
-    const {
-        personname,
-        birthdate,
-        gender,
-        currentlocation,
-        fatherid,
-        motherid,
-        spouseid,
-        worksat,
-        nativeplace,
-        phone,
-        mail_id,
-        living
-    } = payload;
+    const fields = [
+        'personname',
+        'birthdate',
+        'gender',
+        'currentlocation',
+        'fatherid',
+        'motherid',
+        'spouseid',
+        'worksat',
+        'nativeplace',
+        'phone',
+        'mail_id',
+        'living'
+    ];
+
+    const updates = [];
+    const values = [];
+    let index = 1;
+
+    for (const field of fields) {
+        if (payload[field] !== null && payload[field] !== undefined) {
+            updates.push(`${field} = $${index}`);
+            values.push(payload[field]);
+            index++;
+        }
+    }
+
+    if (updates.length === 0) {
+        return null; // Nothing to update
+    }
+
+    values.push(personId); // For WHERE clause
 
     const updateQuery = `
-        UPDATE network.person SET
-            personname = $1,
-            birthdate = $2,
-            gender = $3,
-            currentlocation = $4,
-            fatherid = $5,
-            motherid = $6,
-            spouseid = $7,
-            worksat = $8,
-            nativeplace = $9,
-            phone = $10,
-            mail_id = $11,
-            living = $12
-        WHERE id = $13
+        UPDATE network.person
+        SET ${updates.join(', ')}
+        WHERE id = $${index}
         RETURNING *;
     `;
 
-    const result = await pool.query(updateQuery, [
-        personname, birthdate, gender, currentlocation,
-        fatherid, motherid, spouseid,
-        worksat, nativeplace, phone, mail_id, living,
-        personId
-    ]);
+    console.log(updateQuery); // for debugging
+    console.log(values);      // for debugging
 
+    const result = await pool.query(updateQuery, values);
     return result.rows[0];
 }
 
