@@ -6,6 +6,7 @@ const applyMiddleware = require('./middleware');
 const peopleRoutes = require('./routes/people');
 const searchRoutes = require('./routes/search');
 const relationRoutes = require('./routes/personController');
+const marriageRoutes = require('./routes/marriageController');
 
 // Initialize Express app
 const app = express();
@@ -30,6 +31,7 @@ applyMiddleware(app);
 app.use('/api/people', peopleRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/details', relationRoutes);
+app.use('/api/marriages', marriageRoutes);
 
 
 
