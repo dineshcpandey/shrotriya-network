@@ -142,6 +142,7 @@ async function searchPeople({ name, location }) {
 // To add new Person to the database 
 
 async function addPerson(personData) {
+    console.log("personservice addPerson")
     const {
         personname,
         birthdate,
@@ -157,11 +158,11 @@ async function addPerson(personData) {
         mail_id,
         living
     } = personData;
-
+    console.log("Person Data ", personData)
     // Generate a new ID
     const result = await pool.query('SELECT MAX(id) as max_id FROM network.person');
     const newId = (result.rows[0].max_id || 0) + 1;
-
+    console.log("New ID: ", newId)
     // Begin transaction
     const client = await pool.connect();
     try {
@@ -284,18 +285,26 @@ async function updatePerson(personId, payload) {
 
     // Update the marriages table 
     if (payload['spouseid']) {
+        let checkQuery, insertQuery;
         if (payload['gender'] == 'M') {
-            updateSpouseQuery = "insert into network.marriages(husbandid,wifeid) values(" + personId + "," + payload["spouseid"] + ")"
+            checkQuery = 'SELECT 1 FROM network.marriages WHERE husbandid = $1 AND wifeid = $2';
+            insertQuery = 'INSERT INTO network.marriages(husbandid, wifeid) VALUES($1, $2)';
         } else if (payload['gender'] == 'F') {
-            updateSpouseQuery = "insert into network.marriages(wifeid,husbandid) values(" + personId + "," + payload["spouseid"] + ")"
+            checkQuery = 'SELECT 1 FROM network.marriages WHERE wifeid = $1 AND husbandid = $2';
+            insertQuery = 'INSERT INTO network.marriages(wifeid, husbandid) VALUES($1, $2)';
         }
-    }
 
-    console.log(updateSpouseQuery)
-    if (updateSpouseQuery) {
-        const spouseResult = await pool.query(updateSpouseQuery)
-        console.log("Updated the spouse relation")
-        console.log(updateSpouseQuery, '  ', spouseResult)
+        try {
+            const checkResult = await pool.query(checkQuery, [personId, payload["spouseid"]]);
+            if (checkResult.rows.length === 0) {
+                const insertResult = await pool.query(insertQuery, [personId, payload["spouseid"]]);
+                console.log("Inserted new spouse relation");
+            } else {
+                console.log("Spouse relation already exists");
+            }
+        } catch (error) {
+            console.error("Error updating spouse relation:", error);
+        }
     }
 
 

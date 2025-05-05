@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const applyMiddleware = require('./middleware');
-const peopleRoutes = require('./routes/people');
 const searchRoutes = require('./routes/search');
 const relationRoutes = require('./routes/personController');
 const marriageRoutes = require('./routes/marriageController');
@@ -28,7 +27,7 @@ app.use(cors({
 applyMiddleware(app);
 
 // API Routes
-app.use('/api/people', peopleRoutes);
+
 app.use('/api/search', searchRoutes);
 app.use('/api/details', relationRoutes);
 app.use('/api/marriages', marriageRoutes);
