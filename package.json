@@ -1,24 +1,50 @@
 {
-    "name": "network-api",
+    "name": "family-network-api",
     "version": "1.0.0",
-    "description": "API for managing person network data",
+    "description": "API for managing family networks and relationships",
     "main": "app.js",
     "scripts": {
         "start": "node app.js",
         "dev": "nodemon app.js",
-        "test": "jest"
+        "test": "jest",
+        "docs:serve": "swagger-ui-serve swagger.yaml",
+        "docs:build": "swagger-codegen generate -i swagger.yaml -l html2 -o docs/generated",
+        "yaml-to-json": "node -e \"console.log(JSON.stringify(require('yamljs').load('swagger.yaml'), null, 2))\" > swagger.json"
     },
     "dependencies": {
         "body-parser": "^1.20.2",
         "cors": "^2.8.5",
-        "dotenv": "^16.3.1",
+        "dotenv": "^16.0.3",
         "express": "^4.18.2",
         "morgan": "^1.10.0",
-        "pg": "^8.11.3"
+        "multer": "^2.0.1",
+        "pg": "^8.11.0",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^4.6.3",
+        "yamljs": "^0.3.0"
     },
     "devDependencies": {
-        "jest": "^29.7.0",
-        "nodemon": "^3.0.1",
+        "jest": "^29.5.0",
+        "nodemon": "^2.0.22",
         "supertest": "^6.3.3"
-    }
+    },
+    "keywords": [
+        "family",
+        "network",
+        "api",
+        "relationships",
+        "genealogy",
+        "swagger",
+        "openapi"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yourusername/your-repo.git"
+    },
+    "bugs": {
+        "url": "https://github.com/yourusername/your-repo/issues"
+    },
+    "homepage": "https://yourusername.github.io/your-repo"
 }

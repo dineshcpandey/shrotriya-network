@@ -1,0 +1,891 @@
+// swagger.js - Simple configuration without YAML parsing
+const swaggerUi = require('swagger-ui-express');
+
+// Direct JSON swagger document (no YAML parsing needed)
+const swaggerDocument = {
+    openapi: '3.0.3',
+    info: {
+        title: 'Family Network API',
+        description: 'A comprehensive API for managing family networks, person details, relationships, and marriages.',
+        version: '1.0.0',
+        contact: {
+            name: 'API Support',
+            email: 'support@familynetwork.com'
+        },
+        license: {
+            name: 'MIT',
+            url: 'https://opensource.org/licenses/MIT'
+        }
+    },
+    servers: [
+        {
+            url: process.env.NODE_ENV === 'production'
+                ? (process.env.API_BASE_URL || 'https://your-api-domain.com')
+                : `http://localhost:${process.env.PORT || 3000}`,
+            description: process.env.NODE_ENV === 'production' ? 'Production' : 'Development'
+        }
+    ],
+    tags: [
+        { name: 'Search', description: 'Search operations for finding people' },
+        { name: 'Person Management', description: 'CRUD operations for person records' },
+        { name: 'Family Network', description: 'Operations for managing family relationships' },
+        { name: 'Marriages', description: 'Operations for managing marriage records' }
+    ],
+    paths: {
+        '/': {
+            get: {
+                summary: 'Health check endpoint',
+                description: 'Returns server status',
+                responses: {
+                    '200': {
+                        description: 'Server is running',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        message: {
+                                            type: 'string',
+                                            example: 'Network API Server is running'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/api/search': {
+            get: {
+                tags: ['Search'],
+                summary: 'Search for people',
+                description: 'Search for people by name, location, gender, or birthdate',
+                parameters: [
+                    {
+                        name: 'name',
+                        in: 'query',
+                        description: 'Search by person name or alias (case-insensitive partial match)',
+                        required: false,
+                        schema: {
+                            type: 'string',
+                            example: 'John'
+                        }
+                    },
+                    {
+                        name: 'location',
+                        in: 'query',
+                        description: 'Search by current location, birth place, or native place',
+                        required: false,
+                        schema: {
+                            type: 'string',
+                            example: 'Mumbai'
+                        }
+                    },
+                    {
+                        name: 'gender',
+                        in: 'query',
+                        description: 'Search by gender',
+                        required: false,
+                        schema: {
+                            type: 'string',
+                            example: 'Male'
+                        }
+                    },
+                    {
+                        name: 'birthdate',
+                        in: 'query',
+                        description: 'Search by exact birth date',
+                        required: false,
+                        schema: {
+                            type: 'string',
+                            format: 'date',
+                            example: '1990-01-15'
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'List of people matching search criteria',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'array',
+                                    items: {
+                                        $ref: '#/components/schemas/PersonRaw'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '500': {
+                        description: 'Internal server error',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Error'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/api/details/search': {
+            get: {
+                tags: ['Person Management'],
+                summary: 'Advanced search for people with relationships',
+                description: 'Search for people with full relationship data',
+                parameters: [
+                    {
+                        name: 'name',
+                        in: 'query',
+                        description: 'Search by person name',
+                        required: false,
+                        schema: {
+                            type: 'string',
+                            example: 'John'
+                        }
+                    },
+                    {
+                        name: 'location',
+                        in: 'query',
+                        description: 'Search by location',
+                        required: false,
+                        schema: {
+                            type: 'string',
+                            example: 'Mumbai'
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'List of people with relationship data',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'array',
+                                    items: {
+                                        $ref: '#/components/schemas/PersonWithRelationships'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '400': {
+                        description: 'Bad request - missing search parameters',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Error'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/api/details/add': {
+            post: {
+                tags: ['Person Management'],
+                summary: 'Add a new person',
+                description: 'Create a new person record with optional family relationships',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/PersonCreateRequest'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '201': {
+                        description: 'Person created successfully',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        id: {
+                                            type: 'integer',
+                                            example: 123
+                                        },
+                                        message: {
+                                            type: 'string',
+                                            example: 'Person added successfully'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/api/details/{id}': {
+            get: {
+                tags: ['Person Management'],
+                summary: 'Get person details with relationships',
+                description: 'Retrieve detailed information about a person including their family relationships',
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path',
+                        required: true,
+                        description: 'Person ID',
+                        schema: {
+                            type: 'integer',
+                            example: 123
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'Person details with relationships',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/PersonWithRelationships'
+                                }
+                            }
+                        }
+                    },
+                    '404': {
+                        description: 'Person not found'
+                    }
+                }
+            },
+            put: {
+                tags: ['Person Management'],
+                summary: 'Update person details',
+                description: 'Update an existing person\'s information',
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path',
+                        required: true,
+                        description: 'Person ID',
+                        schema: {
+                            type: 'integer',
+                            example: 123
+                        }
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/PersonUpdateRequest'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'Person updated successfully',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/PersonRaw'
+                                }
+                            }
+                        }
+                    },
+                    '404': {
+                        description: 'Person not found'
+                    }
+                }
+            }
+        },
+        '/api/details/{id}/network': {
+            get: {
+                tags: ['Family Network'],
+                summary: 'Get person\'s family network',
+                description: 'Retrieve all people in the family network of a specific person',
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path',
+                        required: true,
+                        description: 'Person ID',
+                        schema: {
+                            type: 'integer',
+                            example: 123
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'Family network members',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'array',
+                                    items: {
+                                        $ref: '#/components/schemas/PersonWithRelationships'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '404': {
+                        description: 'Person not found'
+                    }
+                }
+            }
+        },
+        '/api/marriages/person/{id}': {
+            get: {
+                tags: ['Marriages'],
+                summary: 'Get marriages for a person',
+                description: 'Retrieve all marriage records for a specific person',
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path',
+                        required: true,
+                        description: 'Person ID',
+                        schema: {
+                            type: 'integer',
+                            example: 123
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'List of marriages',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'array',
+                                    items: {
+                                        $ref: '#/components/schemas/MarriageWithNames'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/api/marriages': {
+            post: {
+                tags: ['Marriages'],
+                summary: 'Add a new marriage',
+                description: 'Create a new marriage record between two people',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/MarriageCreateRequest'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '201': {
+                        description: 'Marriage created successfully',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Marriage'
+                                }
+                            }
+                        }
+                    },
+                    '400': {
+                        description: 'Bad request'
+                    }
+                }
+            }
+        },
+        '/api/marriages/{husbandId}/{wifeId}': {
+            put: {
+                tags: ['Marriages'],
+                summary: 'Update a marriage',
+                description: 'Update an existing marriage record',
+                parameters: [
+                    {
+                        name: 'husbandId',
+                        in: 'path',
+                        required: true,
+                        schema: {
+                            type: 'integer'
+                        }
+                    },
+                    {
+                        name: 'wifeId',
+                        in: 'path',
+                        required: true,
+                        schema: {
+                            type: 'integer'
+                        }
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/MarriageUpdateRequest'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'Marriage updated successfully'
+                    }
+                }
+            },
+            delete: {
+                tags: ['Marriages'],
+                summary: 'Delete a marriage',
+                description: 'Remove a marriage record',
+                parameters: [
+                    {
+                        name: 'husbandId',
+                        in: 'path',
+                        required: true,
+                        schema: {
+                            type: 'integer'
+                        }
+                    },
+                    {
+                        name: 'wifeId',
+                        in: 'path',
+                        required: true,
+                        schema: {
+                            type: 'integer'
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'Marriage deleted successfully'
+                    }
+                }
+            }
+        }
+    },
+    components: {
+        schemas: {
+            Error: {
+                type: 'object',
+                properties: {
+                    error: {
+                        type: 'string',
+                        example: 'Something went wrong!'
+                    },
+                    message: {
+                        type: 'string',
+                        example: 'Database connection failed'
+                    }
+                }
+            },
+            PersonRaw: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'integer',
+                        example: 123
+                    },
+                    personname: {
+                        type: 'string',
+                        example: 'John Doe'
+                    },
+                    birthdate: {
+                        type: 'string',
+                        format: 'date',
+                        example: '1990-01-15'
+                    },
+                    fatherid: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 100
+                    },
+                    motherid: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 101
+                    },
+                    gender: {
+                        type: 'string',
+                        example: 'Male'
+                    },
+                    currentlocation: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Mumbai'
+                    },
+                    nativeplace: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Punjab'
+                    },
+                    worksat: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Tech Corp'
+                    },
+                    phone: {
+                        type: 'string',
+                        nullable: true,
+                        example: '+91-9876543210'
+                    },
+                    mail_id: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'john.doe@email.com'
+                    }
+                }
+            },
+            PersonWithRelationships: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string',
+                        example: '123'
+                    },
+                    rels: {
+                        type: 'object',
+                        properties: {
+                            spouses: {
+                                type: 'array',
+                                items: {
+                                    type: 'string'
+                                },
+                                example: ['124', '125']
+                            },
+                            children: {
+                                type: 'array',
+                                items: {
+                                    type: 'string'
+                                },
+                                example: ['126', '127']
+                            },
+                            father: {
+                                type: 'string',
+                                nullable: true,
+                                example: '100'
+                            },
+                            mother: {
+                                type: 'string',
+                                nullable: true,
+                                example: '101'
+                            }
+                        }
+                    },
+                    data: {
+                        type: 'object',
+                        properties: {
+                            'first name': {
+                                type: 'string',
+                                example: 'John'
+                            },
+                            'last name': {
+                                type: 'string',
+                                example: 'Doe'
+                            },
+                            birthday: {
+                                type: 'string',
+                                nullable: true,
+                                example: '1990'
+                            },
+                            avatar: {
+                                type: 'string',
+                                example: 'https://graph.facebook.com/john.doe.123/picture'
+                            },
+                            gender: {
+                                type: 'string',
+                                example: 'M'
+                            },
+                            location: {
+                                type: 'string',
+                                nullable: true,
+                                example: 'Mumbai'
+                            },
+                            contact: {
+                                type: 'object',
+                                properties: {
+                                    email: {
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'john.doe@email.com'
+                                    },
+                                    phone: {
+                                        type: 'string',
+                                        nullable: true,
+                                        example: '+91-9876543210'
+                                    }
+                                }
+                            },
+                            work: {
+                                type: 'string',
+                                nullable: true,
+                                example: 'Tech Corp'
+                            },
+                            nativePlace: {
+                                type: 'string',
+                                nullable: true,
+                                example: 'Punjab'
+                            },
+                            desc: {
+                                type: 'string',
+                                example: 'Punjab Mumbai Tech Corp'
+                            },
+                            label: {
+                                type: 'string',
+                                example: 'John Doe'
+                            }
+                        }
+                    }
+                }
+            },
+            PersonCreateRequest: {
+                type: 'object',
+                required: ['personname'],
+                properties: {
+                    personname: {
+                        type: 'string',
+                        example: 'John Doe'
+                    },
+                    birthdate: {
+                        type: 'string',
+                        format: 'date',
+                        nullable: true,
+                        example: '1990-01-15'
+                    },
+                    gender: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Male'
+                    },
+                    currentlocation: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Mumbai'
+                    },
+                    fatherid: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 100
+                    },
+                    motherid: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 101
+                    },
+                    spouseids: {
+                        type: 'array',
+                        items: {
+                            type: 'integer'
+                        },
+                        example: [102, 103]
+                    },
+                    worksat: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Tech Corp'
+                    },
+                    nativeplace: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Punjab'
+                    },
+                    phone: {
+                        type: 'string',
+                        nullable: true,
+                        example: '+91-9876543210'
+                    },
+                    mail_id: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'john.doe@email.com'
+                    }
+                }
+            },
+            PersonUpdateRequest: {
+                type: 'object',
+                properties: {
+                    personname: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'John Doe'
+                    },
+                    birthdate: {
+                        type: 'string',
+                        format: 'date',
+                        nullable: true,
+                        example: '1990-01-15'
+                    },
+                    gender: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'M'
+                    },
+                    currentlocation: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Mumbai'
+                    },
+                    fatherid: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 100
+                    },
+                    motherid: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 101
+                    },
+                    worksat: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'Tech Corp'
+                    },
+                    phone: {
+                        type: 'string',
+                        nullable: true,
+                        example: '+91-9876543210'
+                    },
+                    mail_id: {
+                        type: 'string',
+                        nullable: true,
+                        example: 'john.doe@email.com'
+                    }
+                }
+            },
+            Marriage: {
+                type: 'object',
+                properties: {
+                    husbandid: {
+                        type: 'integer',
+                        example: 123
+                    },
+                    wifeid: {
+                        type: 'integer',
+                        example: 124
+                    },
+                    marriagedate: {
+                        type: 'string',
+                        format: 'date',
+                        nullable: true,
+                        example: '2015-02-14'
+                    },
+                    marriageyear: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 2015
+                    },
+                    intercaste: {
+                        type: 'boolean',
+                        example: false
+                    }
+                }
+            },
+            MarriageWithNames: {
+                allOf: [
+                    {
+                        $ref: '#/components/schemas/Marriage'
+                    },
+                    {
+                        type: 'object',
+                        properties: {
+                            husband_name: {
+                                type: 'string',
+                                example: 'John Doe'
+                            },
+                            wife_name: {
+                                type: 'string',
+                                example: 'Jane Doe'
+                            }
+                        }
+                    }
+                ]
+            },
+            MarriageCreateRequest: {
+                type: 'object',
+                required: ['husbandId', 'wifeId'],
+                properties: {
+                    husbandId: {
+                        type: 'integer',
+                        example: 123
+                    },
+                    wifeId: {
+                        type: 'integer',
+                        example: 124
+                    },
+                    marriageDate: {
+                        type: 'string',
+                        format: 'date',
+                        nullable: true,
+                        example: '2015-02-14'
+                    },
+                    marriageYear: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 2015
+                    },
+                    intercaste: {
+                        type: 'boolean',
+                        default: false,
+                        example: false
+                    }
+                }
+            },
+            MarriageUpdateRequest: {
+                type: 'object',
+                properties: {
+                    marriageDate: {
+                        type: 'string',
+                        format: 'date',
+                        nullable: true,
+                        example: '2015-02-14'
+                    },
+                    marriageYear: {
+                        type: 'integer',
+                        nullable: true,
+                        example: 2015
+                    },
+                    intercaste: {
+                        type: 'boolean',
+                        nullable: true,
+                        example: false
+                    }
+                }
+            }
+        }
+    }
+};
+
+// Swagger UI options
+const swaggerOptions = {
+    explorer: true,
+    customCss: `
+    .swagger-ui .topbar { display: none }
+    .swagger-ui .info { margin: 50px 0 }
+    .swagger-ui .info .title { color: #3b4151 }
+  `,
+    customSiteTitle: "Family Network API Documentation",
+    swaggerOptions: {
+        persistAuthorization: true,
+        displayRequestDuration: true,
+        docExpansion: 'none',
+        filter: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        defaultModelsExpandDepth: 2,
+        defaultModelExpandDepth: 2
+    }
+};
+
+module.exports = {
+    swaggerDocument,
+    swaggerUi,
+    swaggerOptions
+};
