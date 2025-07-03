@@ -3,9 +3,11 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const applyMiddleware = require('./middleware');
-const searchRoutes = require('./routes/search');
+const searchRoutes = require('./routes/searchController');
 const relationRoutes = require('./routes/personController');
 const marriageRoutes = require('./routes/marriageController');
+const passport = require('passport');
+const authRoutes = require('./routes/auth');
 
 // Import Swagger configuration
 const { swaggerDocument, swaggerUi, swaggerOptions } = require('./swagger');
@@ -47,6 +49,7 @@ app.get('/api-docs.yaml', (req, res) => {
 app.use('/api/search', searchRoutes);
 app.use('/api/details', relationRoutes);
 app.use('/api/marriages', marriageRoutes);
+app.use('/auth', authRoutes);
 
 // Root route with API information
 app.get('/', (req, res) => {
@@ -64,6 +67,7 @@ app.get('/', (req, res) => {
         }
     });
 });
+
 
 // Handle 404 errors
 app.use((req, res) => {
