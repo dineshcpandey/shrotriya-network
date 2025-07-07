@@ -278,7 +278,9 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 // Serve images
 router.get('/serve/:filename', async (req, res) => {
     try {
+
         const { filename } = req.params;
+        console.log("Serving Image: ", filename)
         const filePath = path.join(UPLOAD_DIR, filename);
 
         // Check if file exists
@@ -314,11 +316,29 @@ router.get('/person/:personId', async (req, res) => {
 
         const result = await pool.query(query, [personId]);
 
-        const images = result.rows.map(img => ({
-            ...img,
-            url: `/api/images/serve/${img.filename}`,
-            crop_data: img.crop_data ? JSON.parse(img.crop_data) : null
-        }));
+        const images = result.rows.map(img => {
+            // Safe JSON parsing for crop_data
+            let parsedCropData = null;
+            if (img.crop_data) {
+                try {
+                    // Check if it's already an object
+                    if (typeof img.crop_data === 'object') {
+                        parsedCropData = img.crop_data;
+                    } else if (typeof img.crop_data === 'string') {
+                        parsedCropData = JSON.parse(img.crop_data);
+                    }
+                } catch (parseError) {
+                    console.warn('Error parsing crop_data for image:', img.id, parseError);
+                    parsedCropData = null;
+                }
+            }
+
+            return {
+                ...img,
+                url: `/api/images/serve/${img.filename}`,
+                crop_data: parsedCropData
+            };
+        });
 
         res.json({
             success: true,
@@ -409,12 +429,28 @@ router.get('/metadata/:imageId', async (req, res) => {
 
         const image = result.rows[0];
 
+        // Safe JSON parsing for crop_data
+        let parsedCropData = null;
+        if (image.crop_data) {
+            try {
+                // Check if it's already an object
+                if (typeof image.crop_data === 'object') {
+                    parsedCropData = image.crop_data;
+                } else if (typeof image.crop_data === 'string') {
+                    parsedCropData = JSON.parse(image.crop_data);
+                }
+            } catch (parseError) {
+                console.warn('Error parsing crop_data for image:', image.id, parseError);
+                parsedCropData = null;
+            }
+        }
+
         res.json({
             success: true,
             data: {
                 ...image,
                 url: `/api/images/serve/${image.filename}`,
-                crop_data: image.crop_data ? JSON.parse(image.crop_data) : null
+                crop_data: parsedCropData
             }
         });
 
