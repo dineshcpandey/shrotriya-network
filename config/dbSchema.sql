@@ -2,6 +2,15 @@
 
 CREATE SCHEMA network AUTHORIZATION dineshpandey;
 
+-- DROP SEQUENCE network.images_id_seq;
+
+CREATE SEQUENCE network.images_id_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
 -- DROP SEQUENCE network.users_id_seq;
 
 CREATE SEQUENCE network.users_id_seq
@@ -39,8 +48,12 @@ CREATE TABLE network.person (
 	phone varchar(50) NULL,
 	addedon timestamp DEFAULT now() NULL,
 	addedby varchar NULL,
+	profile_image_url varchar(255) NULL,
+	profile_image_filename varchar(255) NULL,
+	image_upload_date timestamp NULL,
 	CONSTRAINT person_pk PRIMARY KEY (id)
 );
+CREATE INDEX person_currentlocation_idx ON network.person USING btree (currentlocation);
 
 -- Table Triggers
 
@@ -81,6 +94,32 @@ CREATE TABLE network.users (
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	CONSTRAINT users_email_key UNIQUE (email),
 	CONSTRAINT users_pkey PRIMARY KEY (id)
+);
+
+
+-- network.images definition
+
+-- Drop table
+
+-- DROP TABLE network.images;
+
+CREATE TABLE network.images (
+	id serial4 NOT NULL,
+	person_id int4 NULL,
+	filename varchar(255) NOT NULL,
+	original_filename varchar(255) NULL,
+	file_path varchar(500) NOT NULL,
+	file_size int4 NOT NULL,
+	mime_type varchar(50) NOT NULL,
+	image_type varchar(20) DEFAULT 'profile'::character varying NULL,
+	width int4 NULL,
+	height int4 NULL,
+	crop_data jsonb NULL,
+	is_active bool DEFAULT true NULL,
+	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	CONSTRAINT images_pkey PRIMARY KEY (id),
+	CONSTRAINT images_person_id_fkey FOREIGN KEY (person_id) REFERENCES network.person(id) ON DELETE CASCADE
 );
 
 
