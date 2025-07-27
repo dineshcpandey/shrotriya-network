@@ -7,6 +7,7 @@ const fs = require('fs');
 const applyMiddleware = require('./middleware');
 const searchRoutes = require('./routes/searchController');
 const relationRoutes = require('./routes/personController');
+const routeController = require('./routes/routeController');
 const marriageRoutes = require('./routes/marriageController');
 const imageRoutes = require('./routes/imageController'); // New image routes
 const passport = require('passport');
@@ -68,10 +69,12 @@ app.get('/api-docs.yaml', (req, res) => {
 
 // API Routes
 app.use('/api/search', searchRoutes);
+app.use('/api/details', routeController);
 app.use('/api/details', relationRoutes);
 app.use('/api/marriages', marriageRoutes);
 app.use('/api/images', imageRoutes); // New image routes
 app.use('/auth', authRoutes);
+
 
 // Serve image uploader interface
 app.get('/image-uploader', (req, res) => {
