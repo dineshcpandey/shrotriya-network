@@ -1,7 +1,8 @@
 // Edit Form functionality - Updated with relationship search support
-import { getChartInstance, openEditTree, clearCurrentEditPerson } from './chart.js';
+import { getChartInstance, openEditTree, clearCurrentEditPerson, cleanupGenderForm } from './chart.js';
 import { resetAddRelativeState } from './addRelative.js';
 import { initEditRelations, saveRelationships } from './editRelations.js';
+import { cleanupAvatarManager } from './avatarManager.js';
 
 // Elements
 const editForm = document.getElementById('edit-form');
@@ -92,6 +93,10 @@ export function openEditForm(person) {
                         if (node.nodeType === 1 && node.querySelector && node.querySelector('#familyForm')) {
                             // We found the family form, initialize edit relations
                             initEditRelations(person);
+
+                            // Clean up the gender form to remove text input and keep only radio buttons
+                            cleanupGenderForm();
+
                             observer.disconnect();
                             break;
                         }
@@ -137,6 +142,9 @@ export function closeEditForm() {
 
     // Clear the current edit person reference
     clearCurrentEditPerson();
+
+    // Clean up avatar manager
+    cleanupAvatarManager();
 
     // Also reset the add relative state
     resetAddRelativeState();

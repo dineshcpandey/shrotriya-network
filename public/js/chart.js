@@ -6,6 +6,7 @@ import { fetchNetworkData, updatePersonData } from './api.js';
 import { handleNewRelativeClick, isCurrentlyAddingRelative, resetAddRelativeState } from './addRelative.js';
 import { saveRelationshipsOnSubmit } from './editForm.js';
 import { isUserAuthenticated, showLoginForm } from './auth.js';
+import { initializeAvatarManager, cleanupAvatarManager } from './avatarManager.js';
 
 
 
@@ -485,6 +486,9 @@ export async function initializeChart(data, options = {}) {
         // Set up editing mode
         f3EditTree.setEdit();
 
+        // Clean up the gender form after initial setup
+        cleanupGenderForm();
+
         // Set up card click handler
         f3Card.setOnCardClick((e, d) => {
             console.log('Card clicked - ID:', d.data.id);
@@ -692,6 +696,9 @@ export function openEditTree(person) {
         // Open edit form for this person
         f3EditTree.open({ data: person });
         console.log('Edit tree opened for person:', person.id);
+
+        // Clean up the gender form to remove text input and keep only radio buttons
+        cleanupGenderForm();
     } catch (error) {
         console.error('Error opening edit tree:', error);
         currentEditPerson = null; // Reset on error
@@ -703,7 +710,9 @@ export function openEditTree(person) {
  */
 export function clearCurrentEditPerson() {
     currentEditPerson = null;
-    console.log('Cleared current edit person reference');
+    // Clean up avatar manager when clearing person
+    cleanupAvatarManager();
+    console.log('Cleared current edit person reference and avatar manager');
 }
 
 /**
@@ -728,4 +737,81 @@ export function resetChart() {
     f3Card = null;
     f3EditTree = null;
     currentEditPerson = null;
+}
+
+// Function to clean up gender form - remove text input and keep only radio buttons
+// Also initialize avatar manager for enhanced form functionality
+export function cleanupGenderForm() {
+    setTimeout(() => {
+        const editFormContent = document.getElementById('edit-form-content');
+        if (!editFormContent) return;
+
+        // Find the family form
+        const familyForm = editFormContent.querySelector('#familyForm');
+        if (!familyForm) return;
+
+        console.log('Cleaning up gender form fields and initializing avatar manager...');
+
+        // Find gender-related inputs
+        const genderTextInput = familyForm.querySelector('input[name="gender"][type="text"]');
+        const genderRadioInputs = familyForm.querySelectorAll('input[name="gender"][type="radio"]');
+
+        // Remove the gender text input if it exists
+        if (genderTextInput) {
+            const genderFieldContainer = genderTextInput.closest('.f3-form-field') || genderTextInput.parentElement;
+            if (genderFieldContainer) {
+                genderFieldContainer.remove();
+                console.log('Gender text input removed from form');
+            }
+        }
+
+        // Ensure radio buttons are working properly
+        if (genderRadioInputs.length > 0) {
+            console.log('Gender radio buttons found:', genderRadioInputs.length);
+
+            // Make sure radio buttons are properly connected to form submission
+            const form = familyForm;
+            if (form) {
+                // Store reference to original form data collection
+                const originalFormData = form.FormData || FormData;
+
+                // Override form submission to ensure gender comes from radio buttons only
+                const handleFormSubmit = function (e) {
+                    // Get the selected radio button value
+                    const selectedGenderRadio = form.querySelector('input[name="gender"]:checked');
+                    if (selectedGenderRadio) {
+                        console.log('Gender selected from radio button:', selectedGenderRadio.value);
+
+                        // Ensure the selected gender value is available for form processing
+                        // Remove any hidden or text inputs with the same name to avoid conflicts
+                        const conflictingInputs = form.querySelectorAll('input[name="gender"]:not([type="radio"])');
+                        conflictingInputs.forEach(input => {
+                            if (input !== selectedGenderRadio) {
+                                input.remove();
+                            }
+                        });
+                    }
+                };
+
+                // Add event listener for form submission
+                form.addEventListener('submit', handleFormSubmit);
+
+                // Also handle direct onChange events on radio buttons
+                genderRadioInputs.forEach(radio => {
+                    radio.addEventListener('change', function () {
+                        if (this.checked) {
+                            console.log('Gender radio button changed to:', this.value);
+                        }
+                    });
+                });
+            }
+        } else {
+            console.log('No gender radio buttons found in form');
+        }
+
+        // Initialize avatar manager if we have current edit person data
+        if (currentEditPerson) {
+            initializeAvatarManager(currentEditPerson.id, currentEditPerson);
+        }
+    }, 200); // Small delay to ensure form is fully rendered
 }

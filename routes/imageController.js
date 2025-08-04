@@ -208,62 +208,84 @@ const saveImageMetadata = async (personId, fileInfo, originalFilename, cropData)
 
 // Routes
 
-// Upload image with optional cropping
-router.post('/upload', upload.single('image'), async (req, res) => {
+// Upload image with optional cropping - supports both new and legacy formats
+router.post('/upload', upload.any(), async (req, res) => {
     try {
-        if (!req.file) {
+        // Handle both 'image' and 'croppedImage' field names
+        const file = req.files && req.files.length > 0 ? req.files[0] : null;
+
+        if (!file) {
             return res.status(400).json({
                 success: false,
                 message: 'No file uploaded'
             });
         }
 
-        const { personId, cropData } = req.body;
+        const { personId, cropData, imageName } = req.body;
 
-        if (!personId) {
+        // For new format, require personId
+        if (personId) {
+            // Parse crop data if provided
+            let parsedCropData = null;
+            if (cropData) {
+                try {
+                    parsedCropData = JSON.parse(cropData);
+                } catch (error) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid crop data format'
+                    });
+                }
+            }
+
+            // Process and save image
+            const fileInfo = await saveImageSizes(file.buffer, file.originalname, parsedCropData);
+
+            // Save metadata to database
+            const imageRecord = await saveImageMetadata(
+                personId,
+                fileInfo,
+                file.originalname,
+                parsedCropData
+            );
+
+            res.json({
+                success: true,
+                message: 'Image uploaded and processed successfully',
+                data: {
+                    imageId: imageRecord.id,
+                    filename: fileInfo.large.filename,
+                    urls: {
+                        large: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.large.filename}`,
+                        medium: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.medium.filename}`,
+                        thumbnail: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.thumbnail.filename}`
+                    },
+                    metadata: fileInfo.originalMetadata
+                }
+            });
+        } else if (imageName) {
+            // Legacy format for compatibility
+            const fileInfo = await saveImageSizes(file.buffer, imageName);
+
+            res.json({
+                success: true,
+                message: 'Image uploaded successfully',
+                filePath: `/uploads/${fileInfo.large.filename}`,
+                data: {
+                    filename: fileInfo.large.filename,
+                    urls: {
+                        large: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.large.filename}`,
+                        medium: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.medium.filename}`,
+                        thumbnail: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.thumbnail.filename}`
+                    }
+                }
+            });
+        } else {
             return res.status(400).json({
                 success: false,
-                message: 'Person ID is required'
+                message: 'Either personId or imageName is required'
             });
         }
-
-        // Parse crop data if provided
-        let parsedCropData = null;
-        if (cropData) {
-            try {
-                parsedCropData = JSON.parse(cropData);
-            } catch (error) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid crop data format'
-                });
-            }
-        }
-
-        // Process and save image
-        const fileInfo = await saveImageSizes(req.file.buffer, req.file.originalname, parsedCropData);
-
-        // Save metadata to database
-        const imageRecord = await saveImageMetadata(
-            personId,
-            fileInfo,
-            req.file.originalname,
-            parsedCropData
-        );
-
-        res.json({
-            success: true,
-            message: 'Image uploaded and processed successfully',
-            data: {
-                imageId: imageRecord.id,
-                urls: {
-                    large: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.large.filename}`,
-                    medium: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.medium.filename}`,
-                    thumbnail: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.thumbnail.filename}`
-                },
-                metadata: fileInfo.originalMetadata
-            }
-        });
 
     } catch (error) {
         console.error('Error uploading image:', error);
