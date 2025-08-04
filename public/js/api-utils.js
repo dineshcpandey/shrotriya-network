@@ -3,7 +3,7 @@
 import { getAuthToken, getAuthHeaders, logout } from './auth.js';
 
 // Base API URL for your backend
-const API_BASE_URL = 'http://localhost:5050';
+const API_BASE_URL = window.CONFIG?.BASE_URL || 'http://localhost:5050';
 
 /**
  * Make an authenticated API request
@@ -116,7 +116,7 @@ export async function apiDelete(endpoint) {
  */
 
 // Update your existing API_BASE_URL for details endpoints
-const DETAILS_API_BASE_URL = 'http://localhost:5050/api/details';
+const DETAILS_API_BASE_URL = window.CONFIG?.API_BASE_URL || 'http://localhost:5050/api/details';
 
 /**
  * Fetch network data for a specific person (authenticated)

@@ -1,6 +1,6 @@
 // API service functions
 
-const API_BASE_URL = 'http://localhost:5050/api/details';
+const API_BASE_URL = window.CONFIG?.API_BASE_URL || 'http://localhost:5050/api/details';
 //const API_BASE_URL = 'http://192.168.1.37:5050/api/details';
 
 
@@ -121,7 +121,7 @@ export async function updatePersonData(personId, personData) {
                 "birthday": flatData.birthdate || null,
                 "location": flatData.currentlocation || '',
                 "work": flatData.worksat || '',
-                "avatar": personData.data?.avatar || "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+                "avatar": personData.data?.avatar || (window.CONFIG?.DEFAULT_AVATAR_URL || "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg"),
                 "contact": {
                     "email": flatData.mail_id || '',
                     "phone": flatData.phone || ''

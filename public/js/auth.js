@@ -9,7 +9,7 @@ let authToken = null;
 
 // Configuration
 const AUTH_STORAGE_KEY = 'family_tree_auth';
-const AUTH_API_BASE_URL = 'http://localhost:5050/auth';
+const AUTH_API_BASE_URL = window.CONFIG?.AUTH_BASE_URL || 'http://localhost:5050/auth';
 
 /**
  * Initialize authentication from local storage if present

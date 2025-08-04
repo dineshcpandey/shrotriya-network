@@ -10,10 +10,10 @@ export const ImageUtils = {
      * API Configuration
      */
     API: {
-        BASE_URL: 'http://localhost:5050/api/images',
-        UPLOAD_ENDPOINT: 'http://localhost:5050/api/images/upload',
-        SERVE_ENDPOINT: 'http://localhost:5050/api/images/serve',
-        PERSON_IMAGES_ENDPOINT: 'http://localhost:5050/api/images/person'
+        BASE_URL: window.CONFIG?.IMAGE_BASE_URL || 'http://localhost:5050/api/images',
+        UPLOAD_ENDPOINT: window.CONFIG?.IMAGE_BASE_URL ? `${window.CONFIG.IMAGE_BASE_URL}/upload` : 'http://localhost:5050/api/images/upload',
+        SERVE_ENDPOINT: window.CONFIG?.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve',
+        PERSON_IMAGES_ENDPOINT: window.CONFIG?.IMAGE_BASE_URL ? `${window.CONFIG.IMAGE_BASE_URL}/person` : 'http://localhost:5050/api/images/person'
     },
 
     /**
@@ -237,7 +237,7 @@ export const ImageUtils = {
      * @returns {string} Default avatar URL
      */
     getDefaultAvatarUrl() {
-        return "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg";
+        return window.CONFIG?.DEFAULT_AVATAR_URL || "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg";
     },
 
     /**

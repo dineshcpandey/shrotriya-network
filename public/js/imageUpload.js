@@ -12,7 +12,7 @@ class ImageUpload {
             maxSize: 10 * 1024 * 1024, // 10MB
             allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
             allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp'],
-            apiEndpoint: 'http://localhost:5050/api/images/upload',
+            apiEndpoint: window.CONFIG?.IMAGE_BASE_URL ? `${window.CONFIG.IMAGE_BASE_URL}/upload` : 'http://localhost:5050/api/images/upload',
             previewSize: 150, // pixels
             deferUpload: false, // NEW: Enable deferred upload mode
             ...options

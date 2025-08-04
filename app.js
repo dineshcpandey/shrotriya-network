@@ -10,6 +10,7 @@ const relationRoutes = require('./routes/personController');
 const routeController = require('./routes/routeController');
 const marriageRoutes = require('./routes/marriageController');
 const imageRoutes = require('./routes/imageController'); // New image routes
+const configRoutes = require('./routes/configController'); // Configuration routes
 const passport = require('passport');
 const authRoutes = require('./routes/auth');
 
@@ -68,6 +69,7 @@ app.get('/api-docs.yaml', (req, res) => {
 });
 
 // API Routes
+app.use('/api/config', configRoutes); // Configuration endpoint
 app.use('/api/search', searchRoutes);
 app.use('/api/details', routeController);
 app.use('/api/details', relationRoutes);
@@ -248,12 +250,13 @@ app.use((err, req, res, next) => {
 // Start the server
 if (process.env.NODE_ENV !== 'test') {
     app.listen(port, () => {
+        const baseUrl = process.env.BASE_URL || `http://localhost:${port}`;
         console.log(`🚀 Server running on port ${port}`);
-        console.log(`📚 API Documentation: http://localhost:${port}/api-docs`);
-        console.log(`📄 Swagger JSON: http://localhost:${port}/api-docs.json`);
-        console.log(`📋 Swagger YAML: http://localhost:${port}/api-docs.yaml`);
-        console.log(`🖼️  Image Uploader: http://localhost:${port}/image-uploader`);
-        console.log(`🔧 Test Upload: http://localhost:${port}/test-upload`);
+        console.log(`📚 API Documentation: ${baseUrl}/api-docs`);
+        console.log(`📄 Swagger JSON: ${baseUrl}/api-docs.json`);
+        console.log(`📋 Swagger YAML: ${baseUrl}/api-docs.yaml`);
+        console.log(`🖼️  Image Uploader: ${baseUrl}/image-uploader`);
+        console.log(`🔧 Test Upload: ${baseUrl}/test-upload`);
         console.log(`📁 Upload Directory: ${uploadsDir}`);
         console.log(`💾 Environment: ${process.env.NODE_ENV || 'development'}`);
     });

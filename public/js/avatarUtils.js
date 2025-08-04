@@ -56,16 +56,19 @@ export const AvatarUtils = {
         if (imageUrl.startsWith('/uploads/')) {
             // Extract filename from path
             const extractedFilename = imageUrl.split('/').pop();
-            return `http://localhost:5050/api/images/serve/${extractedFilename}`;
+            const imageServeUrl = window.CONFIG?.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve';
+            return `${imageServeUrl}/${extractedFilename}`;
         }
 
         // If we have a filename, use it directly
         if (filename) {
-            return `http://localhost:5050/api/images/serve/${filename}`;
+            const imageServeUrl = window.CONFIG?.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve';
+            return `${imageServeUrl}/${filename}`;
         }
 
         // Fallback: treat as filename
-        return `http://localhost:5050/api/images/serve/${imageUrl}`;
+        const imageServeUrl = window.CONFIG?.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve';
+        return `${imageServeUrl}/${imageUrl}`;
     },
 
     /**

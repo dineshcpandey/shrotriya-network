@@ -257,9 +257,9 @@ router.post('/upload', upload.single('image'), async (req, res) => {
             data: {
                 imageId: imageRecord.id,
                 urls: {
-                    large: `http://localhost:5050/api/images/serve/${fileInfo.large.filename}`,
-                    medium: `http://localhost:5050/api/images/serve/${fileInfo.medium.filename}`,
-                    thumbnail: `http://localhost:5050/api/images/serve/${fileInfo.thumbnail.filename}`
+                    large: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.large.filename}`,
+                    medium: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.medium.filename}`,
+                    thumbnail: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${fileInfo.thumbnail.filename}`
                 },
                 metadata: fileInfo.originalMetadata
             }
@@ -335,7 +335,7 @@ router.get('/person/:personId', async (req, res) => {
 
             return {
                 ...img,
-                url: `http://localhost:5050/api/images/serve/${img.filename}`,
+                url: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${img.filename}`,
                 crop_data: parsedCropData
             };
         });
@@ -449,7 +449,7 @@ router.get('/metadata/:imageId', async (req, res) => {
             success: true,
             data: {
                 ...image,
-                url: `http://localhost:5050/api/images/serve/${image.filename}`,
+                url: `${process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve'}/${image.filename}`,
                 crop_data: parsedCropData
             }
         });

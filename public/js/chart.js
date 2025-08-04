@@ -210,14 +210,17 @@ function convertPersonToChartFormat(person) {
     if (person.profile_image_url) {
         // If it's a relative path, make it absolute
         if (person.profile_image_url.startsWith('/uploads/')) {
-            avatarUrl = `http://localhost:5050/api/images/serve/${person.profile_image_filename}`;
+            const imageServeUrl = window.CONFIG?.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve';
+            avatarUrl = `${imageServeUrl}/${person.profile_image_filename}`;
         } else if (person.profile_image_url.startsWith('http')) {
             avatarUrl = person.profile_image_url;
         } else {
-            avatarUrl = `http://localhost:5050/api/images/serve/${person.profile_image_url}`;
+            const imageServeUrl = window.CONFIG?.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve';
+            avatarUrl = `${imageServeUrl}/${person.profile_image_url}`;
         }
     } else if (person.fb_id) {
-        avatarUrl = `https://graph.facebook.com/${person.fb_id}/picture`;
+        const facebookGraphUrl = window.CONFIG?.FACEBOOK_GRAPH_URL || 'https://graph.facebook.com';
+        avatarUrl = `${facebookGraphUrl}/${person.fb_id}/picture`;
     }
 
     return {

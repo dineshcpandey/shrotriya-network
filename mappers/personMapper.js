@@ -9,7 +9,7 @@ function mapPersonToCustomStructure(dbPerson, relationships = {}) {
         if (!filename) return null;
 
         // Handle different image sizes - prioritize thumbnail for avatar display
-        const baseUrl = 'http://localhost:5050/api/images/serve';
+        const baseUrl = process.env.IMAGE_SERVE_URL || 'http://localhost:5050/api/images/serve';
 
         // If filename already contains size indicator, use as-is
         if (filename.includes('-thumb') || filename.includes('-medium') || filename.includes('-large')) {
@@ -28,7 +28,7 @@ function mapPersonToCustomStructure(dbPerson, relationships = {}) {
     // 1. Uploaded profile image from database (if exists)
     // 2. Facebook profile image (if fb_id exists)
     // 3. Default avatar image
-    let avatarUrl = 'https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg';
+    let avatarUrl = process.env.DEFAULT_AVATAR_URL || 'https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg';
     let hasUploadedImage = false;
 
     if (dbPerson.profile_image_url && dbPerson.profile_image_filename) {
@@ -40,7 +40,8 @@ function mapPersonToCustomStructure(dbPerson, relationships = {}) {
         }
     } else if (dbPerson.fb_id) {
         // Fallback to Facebook profile image
-        avatarUrl = `https://graph.facebook.com/${dbPerson.fb_id}/picture`;
+        const facebookGraphUrl = process.env.FACEBOOK_GRAPH_URL || 'https://graph.facebook.com';
+        avatarUrl = `${facebookGraphUrl}/${dbPerson.fb_id}/picture`;
     }
 
     // Create the base structure

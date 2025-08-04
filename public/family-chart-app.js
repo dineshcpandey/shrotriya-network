@@ -2,7 +2,7 @@
 let chartData = [];
 let f3Chart;
 let loadingIndicator;
-const API_BASE_URL = 'http://localhost:5050/api/details';
+const API_BASE_URL = window.CONFIG?.API_BASE_URL || 'http://localhost:5050/api/details';
 
 // Initialize the application when DOM is ready
 document.addEventListener('DOMContentLoaded', function () {

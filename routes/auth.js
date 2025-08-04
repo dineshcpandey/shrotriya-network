@@ -12,7 +12,8 @@ router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
         // Redirect with token
-        res.redirect(`http://localhost:3000?token=${req.user.token}`);
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        res.redirect(`${frontendUrl}?token=${req.user.token}`);
     }
 );
 
