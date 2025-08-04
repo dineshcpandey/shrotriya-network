@@ -1,0 +1,673 @@
+/* styles/search.css - Complete search module styles */
+
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+}
+
+/* Search form layout */
+.search-form {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.search-field {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+}
+
+.search-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #495057;
+    font-size: 12px;
+}
+
+.search-field input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.search-field input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.search-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-btn,
+.clear-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.search-btn {
+    background: #007bff;
+    color: white;
+}
+
+.search-btn:hover {
+    background: #0056b3;
+}
+
+.search-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.clear-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.clear-btn:hover {
+    background: #5a6268;
+}
+
+/* Location suggestions dropdown */
+.location-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.location-suggestion {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f8f9fa;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+}
+
+.location-suggestion:hover {
+    background: #f8f9fa;
+}
+
+.location-suggestion:last-child {
+    border-bottom: none;
+}
+
+.location-suggestion.selected {
+    background: #007bff;
+    color: white;
+}
+
+.no-suggestions {
+    padding: 8px 12px;
+    color: #6c757d;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Search results modal - CRITICAL: This overrides main.css */
+.search-results-dropdown {
+    /* Force modal positioning */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+
+    /* Modal appearance */
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 9999 !important;
+
+    /* Centering */
+    display: none !important;
+    /* Hidden by default */
+    justify-content: center !important;
+    align-items: center !important;
+
+    /* Animation */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* When modal is shown */
+.search-results-dropdown[style*="flex"] {
+    display: flex !important;
+    opacity: 1;
+}
+
+.search-results-container {
+    position: relative !important;
+    background: white !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    max-height: 80vh !important;
+    width: 90vw !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    transform: none !important;
+}
+
+.search-results-header {
+    padding: 20px !important;
+    border-bottom: 1px solid #e9ecef !important;
+    background: #f8f9fa !important;
+    border-radius: 8px 8px 0 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.search-results-content {
+    padding: 20px !important;
+    max-height: calc(80vh - 80px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* CRITICAL: Single column layout for person cards */
+#person-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.search-error {
+    color: #dc3545;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.results-count {
+    font-weight: 600;
+    color: #495057;
+    margin: 0;
+    font-size: 16px;
+}
+
+.close-results-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.close-results-btn:hover {
+    background: #5a6268;
+}
+
+/* Enhanced person card styling - one per row with color coding */
+.search-results-dropdown .person-card {
+    border: 1px solid #e9ecef !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin-bottom: 0 !important;
+    background: white !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px !important;
+    min-height: 100px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.search-results-dropdown .person-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-2px) !important;
+    border-color: #007bff !important;
+}
+
+/* Gender-based color coding for person cards */
+.search-results-dropdown .person-card.male {
+    border-left: 4px solid #007bff !important;
+}
+
+.search-results-dropdown .person-card.female {
+    border-left: 4px solid #e91e63 !important;
+}
+
+.search-results-dropdown .person-card.unknown {
+    border-left: 4px solid #6c757d !important;
+}
+
+/* Person avatar/image section with gender colors */
+.search-results-dropdown .person-avatar {
+    flex-shrink: 0 !important;
+    width: 70px !important;
+    height: 70px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    border: 3px solid #f8f9fa !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    position: relative !important;
+}
+
+/* Male avatar styling */
+.search-results-dropdown .person-card.male .person-avatar {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+    border-color: #007bff !important;
+}
+
+/* Female avatar styling */
+.search-results-dropdown .person-card.female .person-avatar {
+    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%) !important;
+    border-color: #e91e63 !important;
+}
+
+/* Unknown gender avatar styling */
+.search-results-dropdown .person-card.unknown .person-avatar {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+    border-color: #6c757d !important;
+}
+
+.search-results-dropdown .person-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.search-results-dropdown .person-avatar .avatar-initials {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: white !important;
+}
+
+/* Person info section */
+.search-results-dropdown .person-info {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+.search-results-dropdown .person-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 0 !important;
+}
+
+.search-results-dropdown .person-header h3 {
+    margin: 0 !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: #212529 !important;
+    line-height: 1.2 !important;
+}
+
+.search-results-dropdown .in-chart-badge {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    color: white !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3) !important;
+}
+
+.search-results-dropdown .person-details {
+    color: #6c757d !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+}
+
+.search-results-dropdown .person-details .detail-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-width: 200px !important;
+}
+
+.search-results-dropdown .person-details .detail-icon {
+    width: 16px !important;
+    height: 16px !important;
+    color: #007bff !important;
+    flex-shrink: 0 !important;
+}
+
+.search-results-dropdown .person-details strong {
+    color: #495057 !important;
+    font-weight: 600 !important;
+}
+
+/* Actions section */
+.search-results-dropdown .person-actions {
+    display: flex !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+    align-items: center !important;
+}
+
+.search-results-dropdown .add-to-chart-btn,
+.search-results-dropdown .view-details-btn {
+    padding: 12px 24px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 120px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.search-results-dropdown .add-to-chart-btn {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3) !important;
+}
+
+.search-results-dropdown .add-to-chart-btn:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4) !important;
+}
+
+.search-results-dropdown .view-details-btn {
+    background: #f8f9fa !important;
+    color: #495057 !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.search-results-dropdown .view-details-btn:hover {
+    background: #e9ecef !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Card accent line - different colors for gender */
+.search-results-dropdown .person-card.male::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    border-radius: 12px 12px 0 0;
+}
+
+.search-results-dropdown .person-card.female::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #e91e63, #c2185b);
+    border-radius: 12px 12px 0 0;
+}
+
+.search-results-dropdown .person-card.unknown::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6c757d, #495057);
+    border-radius: 12px 12px 0 0;
+}
+
+.search-results-dropdown .person-card.in-chart::before {
+    background: linear-gradient(90deg, #28a745, #20c997) !important;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+    overflow: hidden !important;
+}
+
+/* Animation for suggestions */
+.location-suggestions {
+    animation: slideDown 0.2s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading and empty states */
+.search-loading {
+    padding: 12px;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.no-results {
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Button focus states */
+.search-btn:focus,
+.clear-btn:focus,
+.close-results-btn:focus,
+.add-to-chart-btn:focus,
+.view-details-btn:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Search field focus indicators */
+.search-field input:focus+.location-suggestions {
+    border-color: #007bff;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-field {
+        min-width: 100%;
+    }
+
+    .search-actions {
+        justify-content: center;
+    }
+
+    .search-results-container {
+        width: 95vw !important;
+        max-height: 90vh !important;
+        margin: 10px !important;
+    }
+
+    .search-results-content {
+        padding: 15px !important;
+        max-height: calc(90vh - 80px) !important;
+    }
+
+    .search-results-header {
+        padding: 15px !important;
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    #person-cards {
+        gap: 12px !important;
+    }
+
+    .search-results-dropdown .person-card {
+        padding: 15px !important;
+        min-height: 80px !important;
+        gap: 15px !important;
+    }
+
+    .search-results-dropdown .person-avatar {
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    .search-results-dropdown .person-avatar .avatar-initials {
+        font-size: 18px !important;
+    }
+
+    .search-results-dropdown .person-header h3 {
+        font-size: 18px !important;
+    }
+
+    .search-results-dropdown .person-details {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .search-results-dropdown .person-details .detail-item {
+        min-width: auto !important;
+    }
+
+    .search-results-dropdown .person-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
+        width: 100px !important;
+    }
+
+    .search-results-dropdown .add-to-chart-btn,
+    .search-results-dropdown .view-details-btn {
+        width: 100% !important;
+        min-width: auto !important;
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-results-dropdown .person-card {
+        padding: 12px !important;
+        gap: 12px !important;
+        flex-direction: column !important;
+        text-align: center !important;
+        min-height: auto !important;
+    }
+
+    .search-results-dropdown .person-avatar {
+        width: 50px !important;
+        height: 50px !important;
+        align-self: center !important;
+    }
+
+    .search-results-dropdown .person-info {
+        align-items: center !important;
+        text-align: center !important;
+    }
+
+    .search-results-dropdown .person-header {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 8px !important;
+        text-align: center !important;
+    }
+
+    .search-results-dropdown .person-header h3 {
+        font-size: 16px !important;
+    }
+
+    .search-results-dropdown .person-details {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .search-results-dropdown .person-details .detail-item {
+        justify-content: center !important;
+    }
+
+    .search-results-dropdown .person-actions {
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+}
+
+/* Additional CSS to override main.css conflicts */
+.search-results-dropdown * {
+    box-sizing: border-box;
+}
+
+/* Override any conflicting styles from main.css */
+.search-results-dropdown {
+    /* These properties override main.css */
+    max-width: none !important;
+    max-height: none !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 0 !important;
+    overflow-y: visible !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}

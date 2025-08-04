@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .route-container {
+            width: 100%;
+            height: 800px;
+            background-color: #2c3e50;
+            position: relative;
+        }
+
+        .node {
+            fill: #3498db;
+            stroke: #2c3e50;
+            stroke-width: 2px;
+            cursor: pointer;
+        }
+
+        .node.main {
+            fill: #e74c3c;
+        }
+
+        .node.route {
+            fill: #f39c12;
+        }
+
+        .link {
+            stroke: #95a5a6;
+            stroke-width: 2px;
+        }
+
+        .link.route {
+            stroke: #e67e22;
+            stroke-width: 4px;
+        }
+
+        .node-label {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            fill: white;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .node-card {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .node-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .node-details {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="route-chart" class="route-container"></div>
+
+    <script>
+        // Your route data (from data5.json)
+        const routeData = [
+            {
+                "id": "52",
+                "name": "Hemant Kumar Pandey",
+                "location": "Taranga",
+                "type": "main",
+                "children": ["53", "65"]
+            },
+            {
+                "id": "53",
+                "name": "Santosh Kumar Pandey",
+                "location": "Dugda",
+                "type": "route",
+                "children": ["14"],
+                "parent": "52"
+            },
+            {
+                "id": "14",
+                "name": "Chhavi Pandey",
+                "location": "Delhi",
+                "type": "route",
+                "spouse": "5",
+                "parent": "53"
+            },
+            {
+                "id": "5",
+                "name": "Dinesh Chandra Pandey",
+                "location": "Delhi",
+                "type": "route",
+                "spouse": "14"
+            },
+            {
+                "id": "65",
+                "name": "Subodh Pandey",
+                "location": "Taranga",
+                "type": "normal",
+                "children": ["278"],
+                "parent": "52"
+            },
+            {
+                "id": "278",
+                "name": "Tapesh Pandey",
+                "location": "Taranga",
+                "type": "normal",
+                "parent": "65"
+            }
+        ];
+
+        // Create SVG
+        const svg = d3.select("#route-chart")
+            .append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%");
+
+        const width = 1200;
+        const height = 800;
+
+        // Create force simulation
+        const simulation = d3.forceSimulation(routeData)
+            .force("link", d3.forceLink().id(d => d.id).distance(150))
+            .force("charge", d3.forceManyBody().strength(-400))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(80));
+
+        // Create links data
+        const links = [];
+        routeData.forEach(node => {
+            if (node.parent) {
+                links.push({
+                    source: node.parent,
+                    target: node.id,
+                    type: node.type === 'route' ? 'route' : 'normal'
+                });
+            }
+            if (node.spouse) {
+                links.push({
+                    source: node.id,
+                    target: node.spouse,
+                    type: 'spouse'
+                });
+            }
+        });
+
+        // Draw links
+        const link = svg.append("g")
+            .selectAll("line")
+            .data(links)
+            .enter().append("line")
+            .attr("class", d => `link ${d.type}`)
+            .style("stroke", d => d.type === 'route' ? '#e67e22' : '#95a5a6')
+            .style("stroke-width", d => d.type === 'route' ? 4 : 2);
+
+        // Draw nodes
+        const node = svg.append("g")
+            .selectAll("g")
+            .data(routeData)
+            .enter().append("g")
+            .attr("class", "node-group")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        // Add node circles
+        node.append("circle")
+            .attr("r", 40)
+            .attr("class", d => `node ${d.type}`)
+            .style("fill", d => {
+                if (d.type === 'main') return '#e74c3c';
+                if (d.type === 'route') return '#f39c12';
+                return '#3498db';
+            });
+
+        // Add node labels
+        node.append("text")
+            .attr("class", "node-label")
+            .attr("dy", -5)
+            .text(d => d.name.split(' ')[0])
+            .style("font-size", "12px")
+            .style("fill", "white");
+
+        node.append("text")
+            .attr("class", "node-label")
+            .attr("dy", 10)
+            .text(d => d.name.split(' ')[1] || '')
+            .style("font-size", "10px")
+            .style("fill", "white");
+
+        // Update positions
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+
+        // Add simulation forces
+        simulation.force("link").links(links);
+
+        // Drag functions
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // Highlight route path
+        function highlightRoute(routeIds) {
+            // Reset all styles
+            node.selectAll("circle").style("fill", d => {
+                if (d.type === 'main') return '#e74c3c';
+                if (d.type === 'route') return '#f39c12';
+                return '#3498db';
+            });
+
+            link.style("stroke", d => d.type === 'route' ? '#e67e22' : '#95a5a6');
+
+            // Highlight route
+            if (routeIds && routeIds.length > 0) {
+                node.selectAll("circle")
+                    .filter(d => routeIds.includes(d.id))
+                    .style("fill", "#27ae60")
+                    .style("stroke", "#2ecc71")
+                    .style("stroke-width", 3);
+            }
+        }
+
+        // Example: highlight a specific route
+        // highlightRoute(['52', '53', '14', '5']);
+    </script>
+</body>
+
+</html>

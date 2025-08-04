@@ -53,6 +53,9 @@ CREATE TABLE network.person (
 	image_upload_date timestamp NULL,
 	CONSTRAINT person_pk PRIMARY KEY (id)
 );
+CREATE INDEX idx_person_father ON network.person USING btree (fatherid) WHERE (fatherid IS NOT NULL);
+CREATE INDEX idx_person_mother ON network.person USING btree (motherid) WHERE (motherid IS NOT NULL);
+CREATE INDEX idx_person_parents ON network.person USING btree (fatherid, motherid) WHERE ((fatherid IS NOT NULL) OR (motherid IS NOT NULL));
 CREATE INDEX person_currentlocation_idx ON network.person USING btree (currentlocation);
 
 -- Table Triggers
@@ -140,6 +143,8 @@ CREATE TABLE network.marriages (
 	CONSTRAINT marriages_husband_fk FOREIGN KEY (husbandid) REFERENCES network.person(id),
 	CONSTRAINT marriages_wife_fk FOREIGN KEY (wifeid) REFERENCES network.person(id)
 );
+CREATE INDEX idx_marriages_husband ON network.marriages USING btree (husbandid);
+CREATE INDEX idx_marriages_wife ON network.marriages USING btree (wifeid);
 
 
 -- network.v_parentchild source

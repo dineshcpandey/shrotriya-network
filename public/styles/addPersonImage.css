@@ -1,0 +1,325 @@
+/* Image Upload Section in Add Person Modal */
+.image-upload-section {
+    padding: 20px 0;
+}
+
+.image-upload-section h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.section-description {
+    margin: 0 0 24px 0;
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.image-upload-tips {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.image-upload-tips h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.image-upload-tips ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.image-upload-tips li {
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+/* Tab Button Enhancement for Image Tab */
+.tab-btn[data-tab="image"] {
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.tab-btn[data-tab="image"]:hover {
+    color: #007bff;
+}
+
+.tab-btn[data-tab="image"].active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+}
+
+.tab-btn[data-tab="image"] svg {
+    transition: transform 0.3s ease;
+}
+
+.tab-btn[data-tab="image"]:hover svg {
+    transform: scale(1.1);
+}
+
+/* Image Tab Pane Specific Styles */
+#image-tab {
+    min-height: 400px;
+}
+
+#image-tab .image-upload-component {
+    margin: 0 auto 24px auto;
+}
+
+/* Form Integration Styles */
+.form-with-image .tab-content {
+    min-height: 500px;
+}
+
+.form-with-image .image-upload-component {
+    max-width: 100%;
+}
+
+/* Upload Status Indicators */
+.upload-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.upload-status.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.upload-status.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.upload-status.warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.upload-status svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+}
+
+/* Form Navigation with Image State */
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.form-navigation .nav-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-navigation .nav-btn.primary {
+    background: #007bff;
+    color: white;
+}
+
+.form-navigation .nav-btn.primary:hover {
+    background: #0056b3;
+}
+
+.form-navigation .nav-btn.secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.form-navigation .nav-btn.secondary:hover {
+    background: #5a6268;
+}
+
+.form-navigation .nav-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Image Preview in Form Summary */
+.form-summary-image {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.form-summary-image .summary-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e9ecef;
+}
+
+.form-summary-image .summary-image-info {
+    flex: 1;
+}
+
+.form-summary-image .summary-image-info .image-name {
+    font-weight: 500;
+    color: #495057;
+    margin: 0 0 2px 0;
+    font-size: 14px;
+}
+
+.form-summary-image .summary-image-info .image-size {
+    color: #6c757d;
+    margin: 0;
+    font-size: 12px;
+}
+
+.form-summary-image .change-image-btn {
+    padding: 6px 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.form-summary-image .change-image-btn:hover {
+    background: #0056b3;
+}
+
+/* Loading States */
+.image-uploading .tab-btn[data-tab="image"] {
+    position: relative;
+    pointer-events: none;
+}
+
+.image-uploading .tab-btn[data-tab="image"]::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    border: 2px solid #007bff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .image-upload-section {
+        padding: 16px 0;
+    }
+
+    .section-description {
+        font-size: 13px;
+    }
+
+    .image-upload-tips {
+        margin-top: 20px;
+        padding: 12px;
+    }
+
+    .image-upload-tips h4 {
+        font-size: 13px;
+    }
+
+    .image-upload-tips ul {
+        font-size: 12px;
+    }
+
+    .form-navigation {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .form-navigation .nav-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-summary-image {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+}
+
+/* Accessibility Improvements */
+.tab-btn[data-tab="image"]:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+.image-upload-section .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .image-upload-tips {
+        border-left-width: 6px;
+    }
+
+    .upload-status {
+        border-width: 2px;
+    }
+}
+
+/* Animation for Tab Switching */
+#image-tab.active {
+    animation: fadeInTab 0.3s ease-in-out;
+}
+
+@keyframes fadeInTab {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

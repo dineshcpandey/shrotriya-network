@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Tree Explorer: Created by Mayuresh</title>
+    <script src="https://unpkg.com/d3@6"></script>
+    <script type="module" src="./family-chart.js"></script>
+    <link rel="stylesheet" href="./styles/family-chart.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/auth.css">
+    <link rel="stylesheet" href="./styles/search.css">
+    <script type="module" src="./js/search.js"></script>
+    <link rel="stylesheet" href="./styles/imageUpload.css">
+    <link rel="stylesheet" href="./styles/imageUpload.css">
+    <script type="module" src="./js/avatarUtils.js"></script>
+    <script type="module" src="./js/chartAvatarEnhancer.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Header with app title -->
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Family Tree Explorer: Created by Mayuresh</h1>
+            </div>
+            <div class="header-controls">
+                <!-- Auth container will be added here by JavaScript -->
+                <button id="edit-button" class="control-btn edit-btn" data-auth-required="true">Edit Person</button>
+                <button id="add-person-button" class="control-btn add-person-btn" data-auth-required="true">Add New
+                    Person</button>
+                <button id="clear-button" class="control-btn clear-btn" data-auth-required="true">Clear Chart</button>
+            </div>
+        </header>
+
+        <!-- Search bar below header -->
+        <div class="search-bar">
+            <div class="search-container">
+                <form id="search-form" class="search-form">
+                    <div class="search-field">
+                        <label for="name-input">Name (optional)</label>
+                        <input type="text" id="name-input" placeholder="Enter person's name...">
+                    </div>
+
+                    <div class="search-field">
+                        <label for="location-input">Location (optional)</label>
+                        <input type="text" id="location-input" placeholder="Enter location..." autocomplete="off">
+                        <div class="location-suggestions" id="location-suggestions"></div>
+                    </div>
+
+                    <div class="search-actions">
+                        <button type="submit" id="search-button" class="search-btn">Search</button>
+                        <button type="button" id="clear-search-btn" class="clear-btn">Clear</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="node-info-container">
+                <div id="selected-info" class="selected-node-info" style="display: none;">
+                    Selected Node: <span id="selected-node-id"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search results dropdown -->
+        <div class="search-results-dropdown" style="display: none; visibility: hidden; opacity: 0;">
+            <div class="search-results-container">
+                <div class="search-results-header">
+                    <div id="results-count" class="results-count">0 results found</div>
+                    <button class="close-results-btn" id="close-results-btn" type="button">Close</button>
+                </div>
+                <div class="search-results-content">
+                    <div id="search-error" class="search-error" style="display: none;"></div>
+                    <div id="person-cards"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full width chart area -->
+        <main class="app-main full-width">
+            <!-- Family Chart -->
+            <div id="FamilyChart" class="f3"></div>
+            <div id="loading-indicator" class="loading-indicator">Loading data...</div>
+            <div id="data-source-indicator" class="data-source-indicator">Initial data loaded</div>
+
+            <!-- Edit Form (initially hidden) -->
+            <div id="edit-form" class="edit-form">
+                <div class="edit-form-header">
+                    <h2 id="edit-form-title">Edit Person</h2>
+                    <button id="close-edit-form" class="close-button">&times;</button>
+                </div>
+                <div id="edit-form-content" class="edit-form-content"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script type="module" src="./js/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,216 @@
+[
+    {
+        "id": "5",
+        "rels": {
+            "spouses": [
+                "14"
+            ],
+            "children": [
+                "7",
+                "539"
+            ],
+            "father": "1",
+            "mother": "2"
+        },
+        "data": {
+            "first name": "Dinesh",
+            "last name": "Chandra Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "Delhi",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": "IBM, Delhi",
+            "nativePlace": "Patratu",
+            "desc": "Patratu Delhi IBM, Delhi",
+            "label": "Dinesh Chandra Pandey"
+        }
+    },
+    {
+        "id": "14",
+        "rels": {
+            "spouses": [
+                "5"
+            ],
+            "children": [
+                "7",
+                "539"
+            ]
+        },
+        "data": {
+            "first name": "Chhavi",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "F",
+            "location": "Delhi",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": "Jeewansaathi, Delhi",
+            "nativePlace": "Taranga",
+            "desc": "Taranga Delhi Jeewansaathi, Delhi",
+            "label": "Chhavi Pandey"
+        }
+    },
+    {
+        "id": "1",
+        "rels": {
+            "father": "3",
+            "mother": "86",
+            "spouses": [
+                "2"
+            ],
+            "children": [
+                "5"
+            ]
+        },
+        "data": {
+            "first name": "Uma",
+            "last name": "Nath Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "Koderma",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": "Patratu thermal Power Station, Patratu",
+            "nativePlace": "Koderma",
+            "desc": "Koderma Koderma Patratu thermal Power Station, Patratu",
+            "label": "Uma Nath Pandey"
+        }
+    },
+    {
+        "id": "2",
+        "rels": {
+            "spouses": [
+                "1"
+            ],
+            "children": [
+                "5"
+            ]
+        },
+        "data": {
+            "first name": "Kalyani",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "F",
+            "location": "Koderma",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": "Koderma",
+            "desc": "Koderma Koderma ",
+            "label": "Kalyani Pandey"
+        }
+    },
+    {
+        "id": "7",
+        "rels": {
+            "spouses": [],
+            "children": [],
+            "father": "5",
+            "mother": "14"
+        },
+        "data": {
+            "first name": "Kartikeya",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "Delhi",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": "Koderma",
+            "desc": "Koderma Delhi ",
+            "label": "Kartikeya Pandey"
+        }
+    },
+    {
+        "id": "539",
+        "rels": {
+            "spouses": [],
+            "children": [],
+            "father": "5",
+            "mother": "14"
+        },
+        "data": {
+            "first name": "Mayuresh",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "Delhi",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": "Koderma",
+            "desc": "Koderma Delhi ",
+            "label": "Mayuresh Pandey"
+        }
+    },
+    {
+        "id": "3",
+        "rels": {
+            "spouses": [
+                "86"
+            ],
+            "children": [
+                "1"
+            ]
+        },
+        "data": {
+            "first name": "Ganpati",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "-",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": "Koderma"
+        },
+        "main": false
+    },
+    {
+        "id": "86",
+        "rels": {
+            "spouses": [
+                "3"
+            ],
+            "children": []
+        },
+        "data": {
+            "first name": "Fulkumari",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "F",
+            "location": null,
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": null
+        },
+        "main": false
+    }
+]

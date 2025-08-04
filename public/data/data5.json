@@ -1,0 +1,186 @@
+[
+    {
+        "id": "5",
+        "rels": {
+            "spouses": [
+                "14"
+            ],
+            "children": []
+        },
+        "data": {
+            "first name": "Dinesh",
+            "last name": "Chandra Pandey",
+            "birthday": null,
+            "avatar": "http://localhost:5050/api/images/serve/1751623665251-d6c11b83-large.jpeg",
+            "gender": "M",
+            "location": "Delhi",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": "IBM, Delhi",
+            "nativePlace": "Patratu",
+            "desc": "Patratu Delhi IBM, Delhi",
+            "label": "Dinesh Chandra Pandey",
+            "hasUploadedImage": true,
+            "profileImageFilename": "1751623665251-d6c11b83-large.jpeg",
+            "profileImageUrl": "/uploads/1751623665251-d6c11b83-large.jpeg",
+            "imageUploadDate": "2025-07-04T10:07:45.312Z"
+        },
+        "main": false
+    },
+    {
+        "id": "14",
+        "rels": {
+            "spouses": [
+                "5"
+            ],
+            "children": [],
+            "father": "53"
+        },
+        "data": {
+            "first name": "Chhavi",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "F",
+            "location": "Delhi",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": "Jeewansaathi, Delhi",
+            "nativePlace": "Taranga",
+            "desc": "Taranga Delhi Jeewansaathi, Delhi",
+            "label": "Chhavi Pandey",
+            "hasUploadedImage": false,
+            "profileImageFilename": null,
+            "profileImageUrl": null,
+            "imageUploadDate": null
+        },
+        "main": false
+    },
+    {
+        "id": "53",
+        "rels": {
+            "spouses": [],
+            "children": [
+                "14"
+            ],
+            "father": "52",
+            "mother": null
+        },
+        "data": {
+            "first name": "Santosh",
+            "last name": "Kumar pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "Dugda",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": "Taranga",
+            "desc": "Taranga Dugda ",
+            "label": "Santosh Kumar pandey",
+            "hasUploadedImage": false,
+            "profileImageFilename": null,
+            "profileImageUrl": null,
+            "imageUploadDate": null
+        },
+        "main": false
+    },
+    {
+        "id": "52",
+        "rels": {
+            "spouses": [],
+            "children": [
+                "53",
+                "65"
+            ]
+        },
+        "data": {
+            "first name": "Hemant",
+            "last name": "Kumar Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "-",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": "Taranga",
+            "desc": "Taranga - ",
+            "label": "Hemant Kumar Pandey",
+            "hasUploadedImage": false,
+            "profileImageFilename": null,
+            "profileImageUrl": null,
+            "imageUploadDate": null
+        },
+        "main": true
+    },
+    {
+        "id": "65",
+        "rels": {
+            "spouses": [],
+            "children": [
+                "278"
+            ],
+            "father": "52"
+        },
+        "data": {
+            "first name": "Subodh",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "Taranga",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": null,
+            "desc": " Taranga ",
+            "label": "Subodh Pandey",
+            "hasUploadedImage": false,
+            "profileImageFilename": null,
+            "profileImageUrl": null,
+            "imageUploadDate": null
+        },
+        "main": false
+    },
+    {
+        "id": "278",
+        "rels": {
+            "spouses": [],
+            "children": [],
+            "father": "65"
+        },
+        "data": {
+            "first name": "Tapesh",
+            "last name": "Pandey",
+            "birthday": null,
+            "avatar": "https://static8.depositphotos.com/1009634/988/v/950/depositphotos_9883921-stock-illustration-no-user-profile-picture.jpg",
+            "gender": "M",
+            "location": "Taranga",
+            "contact": {
+                "email": null,
+                "phone": null
+            },
+            "work": null,
+            "nativePlace": null,
+            "desc": " Taranga ",
+            "label": "Tapesh Pandey",
+            "hasUploadedImage": false,
+            "profileImageFilename": null,
+            "profileImageUrl": null,
+            "imageUploadDate": null
+        },
+        "main": false
+    }
+]

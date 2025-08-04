@@ -81,8 +81,13 @@ app.get('/image-uploader', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'image-uploader.html'));
 });
 
-// Root route with API information
+// Root route - serve the main application page
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'shrotriya.html'));
+});
+
+// API info endpoint
+app.get('/api-info', (req, res) => {
     res.json({
         message: 'Family Network API Server is running',
         version: '1.0.0',

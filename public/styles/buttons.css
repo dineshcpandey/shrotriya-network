@@ -1,0 +1,229 @@
+/* Common Button Styles */
+.control-btn {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.control-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Specific Button Types */
+.edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.edit-btn.active {
+    background-color: #e74c3c;
+}
+
+.highlight-btn {
+    background-color: #f39c12;
+    color: white;
+}
+
+.highlight-btn.active {
+    background-color: #27ae60;
+}
+
+.reset-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.download-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.clear-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.clear-btn:hover {
+    background-color: #c0392b;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.add-person-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.add-person-btn:hover {
+    background-color: #2980b9;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    transition: background-color 0.2s;
+    border-radius: 50%;
+}
+
+.close-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.add-to-tree-btn {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-to-tree-btn:hover {
+    background-color: #24a868;
+    transform: scale(1.05);
+}
+
+.locate-in-tree-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    margin-left: 0.5rem;
+}
+
+.locate-in-tree-btn:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+.locate-in-tree-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.close-results-btn {
+    padding: 0.5rem;
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    align-self: center;
+    transition: background-color 0.2s;
+}
+
+.close-results-btn:hover {
+    background-color: #7f8c8d;
+}
+
+.close-edit-form-btn {
+    display: block;
+    margin: 20px auto 5px auto;
+    padding: 8px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.close-edit-form-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.close-edit-form-btn:active {
+    transform: translateY(0);
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.close-modal-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.next-tab-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.next-tab-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.prev-tab-btn {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.prev-tab-btn:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+.submit-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+.submit-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}

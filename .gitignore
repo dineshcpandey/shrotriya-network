@@ -136,3 +136,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+PROJECT_KNOWLEDGE.md
+backend_instructions.md
+frontend_instructions.md

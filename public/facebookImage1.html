@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Profile Upload</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+</head>
+
+<body>
+
+    <h2>Upload Profile Picture (20x20 Crop)</h2>
+
+    <label for="imageName">Image Name:</label>
+    <input type="text" id="imageName" placeholder="Enter image name (e.g. user123.jpg)" /><br><br>
+
+    <input type="file" id="upload" accept="image/*"><br><br>
+
+    <img id="image-preview" src="" alt="Image preview" style="display:none;" />
+
+    <br>
+    <button onclick="getCroppedImage()">Submit Crop</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        const input = document.getElementById('upload');
+        const image = document.getElementById('image-preview');
+        let cropper;
+
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                image.src = event.target.result;
+                image.style.display = 'block';
+
+                if (cropper) cropper.destroy();
+
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    cropBoxResizable: false,
+                    ready: function () {
+                        cropper.setCropBoxData({ width: 200, height: 200 });
+                    }
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        async function getCroppedImage() {
+            if (!cropper) {
+                alert("Please upload an image first.");
+                return;
+            }
+
+            const canvas = cropper.getCroppedCanvas({ width: 20, height: 20 });
+            const imageNameInput = document.getElementById('imageName').value.trim();
+
+            if (!imageNameInput) {
+                alert("Please enter an image name.");
+                return;
+            }
+
+            canvas.toBlob((blob) => {
+                const formData = new FormData();
+                formData.append('croppedImage', blob); // Image file
+                formData.append('imageName', imageNameInput); // Custom name
+
+                fetch('http://localhost:5050/api/images/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Success:', data);
+                        alert('Image saved as: ' + data.filePath);
+                    })
+                    .catch(err => {
+                        console.error('Error uploading:', err);
+                        alert('Upload failed.');
+                    });
+            }, 'image/jpeg');
+        }
+    </script>
+
+</body>
+
+</html>

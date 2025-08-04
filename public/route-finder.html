@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Finder - Family Tree Explorer</title>
+    <script src="https://unpkg.com/d3@6"></script>
+    <script type="module" src="./family-chart.js"></script>
+    <link rel="stylesheet" href="./styles/family-chart.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/auth.css">
+    <link rel="stylesheet" href="./styles/search.css">
+    <link rel="stylesheet" href="./styles/imageUpload.css">
+    <link rel="stylesheet" href="./styles/route-finder.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button.active {
+            background-color: #e74c3c;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #34495e;
+            border-radius: 10px;
+            background-color: #34495e;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node-card {
+            position: absolute;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 160px;
+            max-width: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .node-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .node-card.main {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-color: #f39c12;
+        }
+
+        .node-card.route {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            border-color: #27ae60;
+        }
+
+        .node-card.expanded {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            border-color: #2ecc71;
+        }
+
+        .node-card.female {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+        }
+
+        .node-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .node-details {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3px;
+        }
+
+        .node-id {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        .connection-line {
+            position: absolute;
+            background: #95a5a6;
+            transform-origin: left center;
+            height: 2px;
+            z-index: 1;
+        }
+
+        .connection-line.route {
+            background: #f39c12;
+            height: 4px;
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+        }
+
+        .connection-line.spouse {
+            background: #e74c3c;
+            height: 3px;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+
+        .route-info {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(52, 73, 94, 0.8);
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Header with app title -->
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Route Finder - Family Tree Explorer</h1>
+            </div>
+            <div class="header-controls">
+                <!-- Auth container will be added here by JavaScript -->
+                <button id="edit-button" class="control-btn edit-btn" data-auth-required="true">Edit Person</button>
+                <button id="add-person-button" class="control-btn add-person-btn" data-auth-required="true">Add New
+                    Person</button>
+                <button id="clear-button" class="control-btn clear-btn" data-auth-required="true">Clear Chart</button>
+                <a href="shrotriya.html" class="control-btn nav-btn">Back to Explorer</a>
+            </div>
+        </header>
+
+        <!-- Route finder controls -->
+        <div class="route-finder-bar" id="route-finder-bar">
+            <div class="route-finder-container">
+                <div class="person-selector">
+                    <h3>Find Route Between Two People</h3>
+
+                    <!-- Person 1 Selection -->
+                    <div class="person-selection-group">
+                        <label>Person 1</label>
+                        <div class="search-container">
+                            <form id="search-form-1" class="search-form">
+                                <div class="search-field">
+                                    <input type="text" id="name-input-1" placeholder="Enter person's name...">
+                                </div>
+                                <div class="search-field">
+                                    <input type="text" id="location-input-1" placeholder="Enter location..."
+                                        autocomplete="off">
+                                    <div class="location-suggestions" id="location-suggestions-1"></div>
+                                </div>
+                                <div class="search-actions">
+                                    <button type="submit" id="search-button-1" class="search-btn">Search</button>
+                                    <button type="button" id="clear-search-btn-1" class="clear-btn">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="selected-person-display" id="person1-display">
+                            <span class="no-selection">No person selected</span>
+                        </div>
+                    </div>
+
+                    <!-- Person 2 Selection -->
+                    <div class="person-selection-group">
+                        <label>Person 2</label>
+                        <div class="search-container">
+                            <form id="search-form-2" class="search-form">
+                                <div class="search-field">
+                                    <input type="text" id="name-input-2" placeholder="Enter person's name...">
+                                </div>
+                                <div class="search-field">
+                                    <input type="text" id="location-input-2" placeholder="Enter location..."
+                                        autocomplete="off">
+                                    <div class="location-suggestions" id="location-suggestions-2"></div>
+                                </div>
+                                <div class="search-actions">
+                                    <button type="submit" id="search-button-2" class="search-btn">Search</button>
+                                    <button type="button" id="clear-search-btn-2" class="clear-btn">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="selected-person-display" id="person2-display">
+                            <span class="no-selection">No person selected</span>
+                        </div>
+                    </div>
+
+                    <!-- Find Route Button -->
+                    <div class="route-actions">
+                        <button id="find-route-btn" class="find-route-btn" disabled>Find Route</button>
+                        <button id="clear-selections-btn" class="clear-btn">Clear Selections</button>
+                    </div>
+                </div>
+
+                <!-- Route Results Info -->
+                <div class="route-info-container">
+                    <div id="route-info" class="route-info" style="display: none;">
+                        <div class="route-status">
+                            <span id="route-status-text">Ready to find route</span>
+                        </div>
+                        <div class="route-details" id="route-details" style="display: none;">
+                            <div class="route-stat">
+                                <span class="stat-label">Degree of Separation:</span>
+                                <span class="stat-value" id="degree-value">-</span>
+                            </div>
+                            <div class="route-stat">
+                                <span class="stat-label">Path Length:</span>
+                                <span class="stat-value" id="path-length-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart mode toggle button -->
+        <div class="chart-mode-controls" id="chart-mode-controls" style="display: none;">
+            <button id="toggle-search-btn" class="toggle-search-btn">
+                <span class="toggle-icon">🔍</span>
+                Show Search Controls
+            </button>
+            <div class="chart-mode-info">
+                <span id="chart-mode-route-info">Route visualization mode</span>
+            </div>
+        </div>
+
+        <!-- Search results dropdowns -->
+        <div class="search-results-dropdown" id="search-results-dropdown-1"
+            style="display: none; visibility: hidden; opacity: 0;">
+            <div class="search-results-container">
+                <div class="search-results-header">
+                    <div id="results-count-1" class="results-count">0 results found</div>
+                    <button class="close-results-btn" id="close-results-btn-1" type="button">Close</button>
+                </div>
+                <div class="search-results-content">
+                    <div id="search-error-1" class="search-error" style="display: none;"></div>
+                    <div id="person-cards-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-results-dropdown" id="search-results-dropdown-2"
+            style="display: none; visibility: hidden; opacity: 0;">
+            <div class="search-results-container">
+                <div class="search-results-header">
+                    <div id="results-count-2" class="results-count">0 results found</div>
+                    <button class="close-results-btn" id="close-results-btn-2" type="button">Close</button>
+                </div>
+                <div class="search-results-content">
+                    <div id="search-error-2" class="search-error" style="display: none;"></div>
+                    <div id="person-cards-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full width chart area -->
+        <main class="app-main full-width" id="chart-main">
+            <!-- Family Chart -->
+            <div id="FamilyChart" class="f3"
+                style="width: 100%; height: 700px; background-color: rgb(33, 33, 33); color: #fff;"></div>
+            <div id="d3-chart-container" class="d3-chart-container" style="display: none;">
+                <div class="d3-chart-loading">Select two people to find route</div>
+            </div>
+            <div id="loading-indicator" class="loading-indicator">Loading data...</div>
+            <div id="data-source-indicator" class="data-source-indicator">Select two people to find route</div>
+            <div id="d3-chart-container" class="d3-chart-container" style="display: none;">
+                <div class="d3-chart-loading">Select two people to find route</div>
+            </div>
+            <!-- Edit Form (initially hidden) -->
+            <div id="edit-form" class="edit-form">
+                <div class="edit-form-header">
+                    <h2 id="edit-form-title">Edit Person</h2>
+                    <button id="close-edit-form" class="close-button">&times;</button>
+                </div>
+                <div id="edit-form-content" class="edit-form-content"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script type="module" src="./js/route-finder.js"></script>
+</body>
+
+</html>
