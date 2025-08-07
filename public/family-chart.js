@@ -779,7 +779,7 @@
     return links;
 
     function handleAncestrySide({ d }) {
-      console.log("handleAncestrySide ", d)
+      //console.log("handleAncestrySide ", d)
       //console.log("Checking for Parents")
       //console.dir(d)
       if (!d.parents) return
@@ -2226,7 +2226,7 @@
               : cardInnerDefault;
 
     return function (d) {
-      console.dir(d)
+      //console.dir(d)
       this.innerHTML = (`
     <div class="card ${getClassList(d).join(' ')}" data-id="${d.data.id}" style="transform: translate(-50%, -50%); pointer-events: auto;">
       ${props.mini_tree ? getMiniTree(d) : ''}
@@ -2283,7 +2283,7 @@
     }
 
     function getMiniTree(d) {
-      console.log("=>getMiniTree", d)
+      //console.log("=>getMiniTree", d)
       if (!props.mini_tree) return ''
       if (d.data.to_add) return ''
       if (d.data._new_rel_data) return ''

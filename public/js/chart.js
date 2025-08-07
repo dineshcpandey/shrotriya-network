@@ -7,6 +7,7 @@ import { handleNewRelativeClick, isCurrentlyAddingRelative, resetAddRelativeStat
 import { saveRelationshipsOnSubmit } from './editForm.js';
 import { isUserAuthenticated, showLoginForm } from './auth.js';
 import { initializeAvatarManager, cleanupAvatarManager } from './avatarManager.js';
+import { initializeVisualizationControls, setFocusPerson, VISUALIZATION_MODES, applyVisualizationConfig } from './visualizationControls.js';
 
 
 
@@ -17,6 +18,16 @@ let f3Card = null;
 let f3EditTree = null;
 // Track the currently edited person
 let currentEditPerson = null;
+// Enhanced visualization state
+let currentVisualizationConfig = {
+    cardDimensions: { w: 250, h: 150 },
+    spacing: { x: 280, y: 180 },
+    mode: VISUALIZATION_MODES.DETAIL,
+    layout: 'vertical',
+    showMiniMap: true,
+    maxGenerations: 0
+};
+let miniMapInstance = null;
 
 /**
  * Handle form submission for person edits
@@ -400,16 +411,19 @@ export async function initializeChart(data, options = {}) {
         // Create new chart instance
         f3Chart = window.f3.createChart('#FamilyChart', data)
             .setTransitionTime(1000)
-            .setCardXSpacing(250)
-            .setCardYSpacing(150)
+            .setCardXSpacing(currentVisualizationConfig.spacing.x)
+            .setCardYSpacing(currentVisualizationConfig.spacing.y)
             .setOrientationVertical()
             .setSingleParentEmptyCard(false);
 
-        // Set up card
+        // Apply current visualization configuration
+        applyVisualizationConfig();
+
+        // Set up card with dynamic dimensions
         f3Card = f3Chart.setCard(window.f3.CardHtml)
             .setCardDisplay([["first name", "last name"], ["birthday"]])
-            .setCardDim({})
-            .setMiniTree(true)
+            .setCardDim(currentVisualizationConfig.cardDimensions)
+            .setMiniTree(currentVisualizationConfig.showMiniMap)
             .setStyle('imageRect')
             .setOnHoverPathToMain();
 
@@ -522,6 +536,9 @@ export async function initializeChart(data, options = {}) {
 
         // Update tree initially
         f3Chart.updateTree({ initial: true });
+
+        // Initialize visualization controls
+        initializeVisualizationControls(f3Chart, data);
 
         console.log('Chart initialization complete');
         return f3Chart;
