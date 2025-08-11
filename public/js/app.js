@@ -239,6 +239,30 @@ async function handleNodeSelect(node) {
     // Clear search results when a node is selected
     clearSearchResults();
 
+    // Check if edit form is currently visible and update it with the new person
+    const editForm = document.getElementById('edit-form');
+    const editBtn = document.getElementById('edit-button');
+
+    if (editForm && editForm.classList.contains('visible') && isEditFormVisible) {
+        console.log('Edit form is open, updating with new person:', node);
+        try {
+            // Update the edit form with the new person's details
+            openEditForm(node);
+
+            // Update the edit button text to reflect the current person
+            if (editBtn) {
+                editBtn.textContent = 'Close Edit Form';
+                editBtn.classList.add('active');
+            }
+
+            // Show notification that the form has been updated
+            showNotification(`Edit form updated for ${fullName}`, 'info');
+        } catch (error) {
+            console.error('Error updating edit form with new person:', error);
+            showNotification('Error updating edit form', 'error');
+        }
+    }
+
     // Only fetch network data if this is coming from a direct chart click,
     // not from a search highlight (to avoid unnecessary API calls)
     if (!node._fromSearch) {
@@ -613,6 +637,23 @@ function showNotification(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', initApp);
 
 // Export functions and state that other modules might need
+// Helper functions for edit form state management
+/**
+ * Get the current edit form visibility state
+ * @returns {boolean} Whether the edit form is visible
+ */
+export function getEditFormVisibility() {
+    return isEditFormVisible;
+}
+
+/**
+ * Set the edit form visibility state
+ * @param {boolean} visible - Whether the edit form should be visible
+ */
+export function setEditFormVisibility(visible) {
+    isEditFormVisible = visible;
+}
+
 export {
     selectedNode,
     handleNodeSelect,
