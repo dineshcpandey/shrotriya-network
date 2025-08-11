@@ -348,20 +348,27 @@ export async function searchPeople(name = '', location = '') {
  */
 export async function fetchLocationSuggestions(query = '') {
     try {
+        console.log(`Fetching location suggestions for query: "${query}"`);
         const params = new URLSearchParams();
 
         if (query && query.trim() !== '') {
             params.append('query', query.trim());
         }
 
-        const response = await makeAuthenticatedRequest(`/api/search/locations?${params.toString()}`);
+        const url = `/api/search/locations?${params.toString()}`;
+        console.log(`Making request to: ${url}`);
+
+        const response = await makeAuthenticatedRequest(url);
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Location API error: ${response.status} - ${errorText}`);
             throw new Error(`Location API error: ${response.status}`);
         }
 
         const data = await response.json();
         console.log(`Location suggestions for query "${query}":`, data.length, 'items');
+        console.log('Location suggestions data:', data);
         return data;
     } catch (error) {
         console.error('Error fetching location suggestions:', error);

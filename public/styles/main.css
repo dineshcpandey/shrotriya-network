@@ -571,6 +571,23 @@ body {
     transform: translateY(0);
 }
 
+.route-finder-btn {
+    background-color: #9b59b6;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.route-finder-btn:hover {
+    background-color: #8e44ad;
+    color: white;
+    text-decoration: none;
+}
+
+.route-finder-btn:active {
+    transform: translateY(0);
+}
+
 /* Edit Form */
 .edit-form {
     position: absolute;

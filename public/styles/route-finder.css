@@ -138,6 +138,8 @@
     cursor: pointer;
     border-bottom: 1px solid #f8f9fa;
     transition: background-color 0.2s ease;
+    color: #333;
+    font-size: 0.9rem;
 }
 
 .location-suggestion-item:hover {

@@ -242,7 +242,10 @@ class PersonSearch {
         // Location type-ahead
         if (this.locationInput) {
             this.locationInput.addEventListener('input', (e) => this.handleLocationInput(e));
-            this.locationInput.addEventListener('blur', () => this.hideSuggestions());
+            this.locationInput.addEventListener('blur', () => {
+                // Add a small delay to allow click events on suggestions to process first
+                setTimeout(() => this.hideSuggestions(), 150);
+            });
         }
 
         // Close results button
@@ -456,6 +459,7 @@ class PersonSearch {
 
     async handleLocationInput(e) {
         const query = e.target.value.trim();
+        console.log(`Person ${this.personNumber} location input:`, query);
 
         if (this.debounceTimer) {
             clearTimeout(this.debounceTimer);
@@ -464,10 +468,13 @@ class PersonSearch {
         this.debounceTimer = setTimeout(async () => {
             if (query.length >= 2) {
                 try {
+                    console.log(`Fetching location suggestions for "${query}"...`);
                     const suggestions = await fetchLocationSuggestions(query);
+                    console.log(`Received ${suggestions.length} location suggestions:`, suggestions);
                     this.showSuggestions(suggestions);
                 } catch (error) {
                     console.error('Location suggestions error:', error);
+                    this.hideSuggestions();
                 }
             } else {
                 this.hideSuggestions();
@@ -476,26 +483,48 @@ class PersonSearch {
     }
 
     showSuggestions(suggestions) {
-        // Implementation for location suggestions
-        if (this.locationSuggestions && suggestions.length > 0) {
-            this.locationSuggestions.innerHTML = '';
-            suggestions.forEach(suggestion => {
+        console.log(`Person ${this.personNumber} showSuggestions called with:`, suggestions);
+
+        if (!this.locationSuggestions) {
+            console.error(`Location suggestions container not found for person ${this.personNumber}`);
+            return;
+        }
+
+        // Clear existing suggestions
+        this.locationSuggestions.innerHTML = '';
+
+        if (suggestions && suggestions.length > 0) {
+            suggestions.forEach((suggestion, index) => {
+                console.log(`Adding suggestion ${index + 1}:`, suggestion);
                 const item = document.createElement('div');
                 item.className = 'location-suggestion-item';
                 item.textContent = suggestion;
-                item.addEventListener('click', () => {
+
+                // Use mousedown instead of click to fire before blur event
+                const selectSuggestion = (e) => {
+                    e.preventDefault(); // Prevent any default behavior
+                    e.stopPropagation(); // Stop event bubbling
+                    console.log(`Person ${this.personNumber} selected location:`, suggestion);
                     this.locationInput.value = suggestion;
                     this.hideSuggestions();
-                });
+                };
+
+                item.addEventListener('mousedown', selectSuggestion);
+                item.addEventListener('click', selectSuggestion); // Fallback for accessibility
                 this.locationSuggestions.appendChild(item);
             });
             this.locationSuggestions.style.display = 'block';
+            console.log(`Person ${this.personNumber} location suggestions displayed`);
+        } else {
+            console.log(`Person ${this.personNumber} no suggestions to show`);
+            this.hideSuggestions();
         }
     }
 
     hideSuggestions() {
         if (this.locationSuggestions) {
             this.locationSuggestions.style.display = 'none';
+            console.log(`Person ${this.personNumber} location suggestions hidden`);
         }
     }
 
